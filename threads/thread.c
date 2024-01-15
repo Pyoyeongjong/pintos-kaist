@@ -28,6 +28,9 @@
    that are ready to run but not actually running. */
 static struct list ready_list;
 
+/* List of processes which is going to sleep */
+static struct list block_list;
+
 /* Idle thread. */
 static struct thread *idle_thread;
 
@@ -109,7 +112,7 @@ thread_init (void) {
 	lock_init (&tid_lock);
 	list_init (&ready_list);
 	list_init (&destruction_req);
-
+	list_init (&block_list);
 	/* Set up a thread structure for the running thread. */
 	initial_thread = running_thread ();
 	init_thread (initial_thread, "main", PRI_DEFAULT);
@@ -307,7 +310,45 @@ thread_yield (void) {
 	do_schedule (THREAD_READY);
 	intr_set_level (old_level);
 }
+/* Thread Sleep */
+void
+thread_sleep (int64_t sleeptime) {
+	struct thread *curr = thread_current();
+	enum intr_level old_level;
 
+	ASSERT (!intr_context ());
+	
+	old_level = intr_disable ();
+	if(curr != idle_thread) {
+		curr->sleeptime = sleeptime;
+		list_insert_ordered (&block_list, &curr->elem, thread_compare_sleeptime, NULL);
+		thread_block();
+	}
+	intr_set_level (old_level);
+}
+/* WakeUp thread */
+void thread_wakeup(int64_t ticks) {
+	enum intr_level old_level;
+	old_level = intr_disable();
+
+	struct list_elem *curr = list_begin(&block_list);
+	while(curr != list_end(&block_list)) {
+		struct thread *sleeping_thread = list_entry(curr, struct thread, elem);
+		if(ticks >= sleeping_thread->sleeptime) {
+			curr = list_remove(curr);
+			thread_unblock(sleeping_thread);
+		}
+		else
+			break;
+	}
+	intr_set_level(old_level);	
+}
+
+bool
+thread_compare_sleeptime(const struct list_elem *l, const struct list_elem *s, void *aux UNUSED) {
+	return list_entry(l, struct thread, elem)->sleeptime
+		< list_entry(s, struct thread, elem)->sleeptime;
+}
 /* Sets the current thread's priority to NEW_PRIORITY. */
 void
 thread_set_priority (int new_priority) {
