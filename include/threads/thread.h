@@ -137,8 +137,10 @@ void thread_sleep(int64_t sleeptime);
 void thread_wakeup(int64_t ticks);
 
 bool thread_compare_sleeptime(const struct list_elem *l, const struct list_elem *s, void *aux UNUSED);
+void thread_confirm_priority_order(void);
 int thread_get_priority (void);
 void thread_set_priority (int);
+bool thread_compare_priority(const struct list_elem *l, const struct list_elem *s, void *aux UNUSED);
 
 int thread_get_nice (void);
 void thread_set_nice (int);
