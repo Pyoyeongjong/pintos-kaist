@@ -33,6 +33,7 @@ struct condition {
 	struct list waiters;        /* List of waiting threads. */
 };
 
+bool semaphore_compare_priority (const struct list_elem *l, const struct list_elem *s, void *aux);
 void cond_init (struct condition *);
 void cond_wait (struct condition *, struct lock *);
 void cond_signal (struct condition *, struct lock *);

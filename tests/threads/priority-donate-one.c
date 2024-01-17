@@ -14,7 +14,6 @@
 #include "threads/init.h"
 #include "threads/synch.h"
 #include "threads/thread.h"
-
 static thread_func acquire1_thread_func;
 static thread_func acquire2_thread_func;
 

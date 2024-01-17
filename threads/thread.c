@@ -206,7 +206,6 @@ thread_create (const char *name, int priority,
 	t->tf.ss = SEL_KDSEG;
 	t->tf.cs = SEL_KCSEG;
 	t->tf.eflags = FLAG_IF;
-
 	/* Add to run queue. */
 	thread_unblock (t);
     thread_confirm_priority_order();
@@ -302,7 +301,7 @@ thread_yield (void) {
 	struct thread *curr = thread_current ();
 	enum intr_level old_level;
 
-
+    //printf("Hello yield");
 	ASSERT (!intr_context ());
     old_level = intr_disable();
 	if (curr != idle_thread)

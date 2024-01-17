@@ -1886,7 +1886,9 @@ tests	tests/threads/tests.c	/^static const struct test tests[] = $/;"	v	typeref:
 tf	include/threads/thread.h	/^	struct intr_frame tf;               \/* Information for switching *\/$/;"	m	struct:thread	typeref:struct:thread::intr_frame
 thread	include/threads/thread.h	/^struct thread {$/;"	s
 thread_block	threads/thread.c	/^thread_block (void) {$/;"	f
+thread_compare_priority	threads/thread.c	/^thread_compare_priority(const struct list_elem *l, const struct list_elem *s, void *aux UNUSED) {$/;"	f
 thread_compare_sleeptime	threads/thread.c	/^thread_compare_sleeptime(const struct list_elem *l, const struct list_elem *s, void *aux UNUSED) {$/;"	f
+thread_confirm_priority_order	threads/thread.c	/^thread_confirm_priority_order (void){  $/;"	f
 thread_create	threads/thread.c	/^thread_create (const char *name, int priority,$/;"	f
 thread_current	threads/thread.c	/^thread_current (void) {$/;"	f
 thread_exit	threads/thread.c	/^thread_exit (void) {$/;"	f
