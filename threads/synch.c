@@ -256,7 +256,6 @@ semaphore_compare_priority(const struct list_elem *l, const struct list_elem *s
   return list_entry(list_begin(a_list), struct thread, elem)->priority 
     > list_entry(list_begin(b_list), struct thread, elem)->priority;
 }
-
 /* Initializes condition variable COND.  A condition variable
    allows one piece of code to signal a condition and cooperating
    code to receive the signal and act upon it. */
@@ -289,6 +288,32 @@ cond_init (struct condition *cond) {
    we need to sleep. */
 void
 cond_wait (struct condition *cond, struct lock *lock) {
+  
+  /* Test 
+
+    int temp[100];
+    int count = 0;
+    if(!list_empty (&cond->waiters)){
+    
+      struct list_elem *e=list_begin(&cond->waiters);
+    
+      while(1){
+        struct semaphore_elem *tmp = list_entry(e, struct semaphore_elem, elem);
+        struct list *tmp_list = &(tmp->semaphore.waiters);
+        struct thread *thr = list_entry(list_begin(tmp_list), struct thread, elem);
+        temp[count++]=thr->priority;
+        e = list_next(e);
+        if( e == list_tail(&cond->waiters) )
+          break;
+      }
+    }
+
+
+    for(int i=0;i<count;i++){
+        printf("%d ",temp[i]);
+    }
+
+   Test end */
 	struct semaphore_elem waiter;
 
 	ASSERT (cond != NULL);
@@ -297,8 +322,8 @@ cond_wait (struct condition *cond, struct lock *lock) {
 	ASSERT (lock_held_by_current_thread (lock));
 
 	sema_init (&waiter.semaphore, 0);
-	//list_push_back (&cond->waiters, &waiter.elem);
-    list_insert_ordered(&cond->waiters, &waiter.elem, semaphore_compare_priority, 0);
+	list_push_back (&cond->waiters, &waiter.elem);
+    //list_insert_ordered(&cond->waiters, &waiter.elem, semaphore_compare_priority, 0);
 	lock_release (lock);
 	sema_down (&waiter.semaphore);
 	lock_acquire (lock);
