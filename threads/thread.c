@@ -351,14 +351,17 @@ thread_compare_sleeptime(const struct list_elem *l, const struct list_elem *s, v
 void
 thread_confirm_priority_order (void){  
     if(!list_empty(&ready_list) && 
-            thread_current ()->priority < list_entry(list_front(&ready_list), struct thread, elem)
+            thread_current ()->priority < list_entry(list_front(&ready_list), 
+                struct thread, elem)
             ->priority)
         thread_yield();
 }
 /* Sets the current thread's priority to NEW_PRIORITY. */
 void
 thread_set_priority (int new_priority) {
-	thread_current ()->priority = new_priority;
+	thread_current ()->priority_origin = new_priority; 
+
+    donate_get_highest_priority(thread_current());
     thread_confirm_priority_order();
 }
 
@@ -372,6 +375,12 @@ bool
 thread_compare_priority(const struct list_elem *l, const struct list_elem *s, void *aux UNUSED) {
     return list_entry(l, struct thread, elem)->priority >
         list_entry(s, struct thread, elem)->priority;
+}
+
+bool
+thread_compare_donate_priority(const struct list_elem *l, const struct list_elem *s, void *aux UNUSED) {
+    return list_entry(l, struct thread, donate_elem)->priority >
+        list_entry(s, struct thread, donate_elem)->priority;
 }
 
 /* Sets the current thread's nice value to NICE. */
@@ -463,7 +472,8 @@ init_thread (struct thread *t, const char *name, int priority) {
 	t->tf.rsp = (uint64_t) t + PGSIZE - sizeof (void *);
 	t->priority = priority;
     t->priority_origin = priority;
-    list_init(&t->lock_list);
+    t->wait_lock = NULL;
+    list_init(&t->donate_list);
 	t->magic = THREAD_MAGIC;
 }
 
@@ -641,6 +651,55 @@ allocate_tid (void) {
 	lock_acquire (&tid_lock);
 	tid = next_tid++;
 	lock_release (&tid_lock);
-
+    
 	return tid;
 }
+/* Get Highest Priority in donate_list */
+void
+donate_get_highest_priority (struct thread *holder) {
+
+    struct thread *cur = holder;
+    struct list *donate_list = &cur->donate_list;
+
+    int tmp_priority = cur->priority_origin;
+
+    if(!list_empty(donate_list)){
+        list_sort(donate_list, thread_compare_donate_priority, 0);
+        struct thread *t = list_entry(list_begin(donate_list), struct thread, donate_elem);
+
+        if(tmp_priority < t->priority)
+            tmp_priority = t->priority;
+    }
+    cur->priority = tmp_priority;
+}
+/* For Debugging */
+void
+print_ready_list(void){
+    struct list *ready = &ready_list;
+    struct list_elem *e;
+    for(e = list_begin(ready); e!=list_end(ready);e=list_next(e)){
+        struct thread *t = list_entry(e, struct thread, elem);
+        printf(" therad = %s, p=%d  ",t->name,t->priority);
+        
+    }
+
+}
+
+void
+donate_priority(void) {
+
+    int depth;
+    struct thread *cur = thread_current();
+
+    for(depth = 0; depth <8; depth++){
+        if(!cur->wait_lock)
+            break;
+        struct thread *holder = cur->wait_lock->holder;
+        holder->priority = cur->priority;
+        cur = holder;
+    }
+    
+    list_sort(&ready_list,thread_compare_priority,0);
+    //print_ready_list();
+}
+

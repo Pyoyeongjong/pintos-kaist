@@ -93,8 +93,10 @@ struct thread {
 	int priority;                       /* Priority. */
     int priority_origin;
 	int64_t sleeptime;
-    struct list lock_list;
-
+    /* Priority donation */
+    struct list donate_list;
+    struct list_elem donate_elem;
+    struct lock *wait_lock;
 	/* Shared between thread.c and synch.c. */
 	struct list_elem elem;              /* List element. */
 
@@ -143,6 +145,7 @@ void thread_confirm_priority_order(void);
 int thread_get_priority (void);
 void thread_set_priority (int);
 bool thread_compare_priority(const struct list_elem *l, const struct list_elem *s, void *aux UNUSED);
+bool thread_compare_donate_priority(const struct list_elem *l, const struct list_elem *s, void *aux UNUSED);
 
 int thread_get_nice (void);
 void thread_set_nice (int);
@@ -150,5 +153,7 @@ int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
 
 void do_iret (struct intr_frame *tf);
+void donate_get_highest_priority(struct thread *);
+void donate_priority(void);
 
 #endif /* threads/thread.h */
