@@ -116,7 +116,9 @@ sema_up (struct semaphore *sema) {
 					struct thread, elem));
     }
 	sema->value++;
-    thread_confirm_priority_order();
+    if(!intr_context()){
+        thread_confirm_priority_order();
+    }
 	intr_set_level (old_level);
 }
 
@@ -192,6 +194,13 @@ lock_acquire (struct lock *lock) {
 	ASSERT (!intr_context ());
 	ASSERT (!lock_held_by_current_thread (lock));
 
+
+    if(thread_mlfqs){
+        sema_down(&lock->semaphore);
+        lock->holder = thread_current ();
+        return;
+    }
+
     struct thread *holder = thread_current ();
     if(lock->holder) {
         holder->wait_lock = lock;
@@ -235,10 +244,11 @@ void
 lock_release (struct lock *lock) {
 	ASSERT (lock != NULL);
 	ASSERT (lock_held_by_current_thread (lock));
-
-    lock_remove(lock);
-    donate_get_highest_priority(thread_current());
-
+    
+    if(!thread_mlfqs){
+        lock_remove(lock);
+        donate_get_highest_priority(thread_current());
+    }
 	lock->holder = NULL;
 	sema_up (&lock->semaphore);
 }

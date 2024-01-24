@@ -98,7 +98,12 @@ struct thread {
     struct list_elem donate_elem;
     struct lock *wait_lock;
 	/* Shared between thread.c and synch.c. */
-	struct list_elem elem;              /* List element. */
+	
+    struct list_elem elem;              /* List element. */
+    struct list_elem every_elem;
+
+    int nice;
+    int recent_cpu;
 
 #ifdef USERPROG
 	/* Owned by userprog/process.c. */
@@ -113,6 +118,10 @@ struct thread {
 	struct intr_frame tf;               /* Information for switching */
 	unsigned magic;                     /* Detects stack overflow. */
 };
+
+
+void reach(void);
+void printreach(void);
 
 /* If false (default), use round-robin scheduler.
    If true, use multi-level feedback queue scheduler.
@@ -137,11 +146,13 @@ const char *thread_name (void);
 
 void thread_exit (void) NO_RETURN;
 void thread_yield (void);
+void thread_yield_by_extern_interrupt (void);
 void thread_sleep(int64_t sleeptime);
 void thread_wakeup(int64_t ticks);
 
 bool thread_compare_sleeptime(const struct list_elem *l, const struct list_elem *s, void *aux UNUSED);
 void thread_confirm_priority_order(void);
+void thead_confirm_priority_order_by_extern_interrupt(void);
 int thread_get_priority (void);
 void thread_set_priority (int);
 bool thread_compare_priority(const struct list_elem *l, const struct list_elem *s, void *aux UNUSED);
@@ -156,4 +167,14 @@ void do_iret (struct intr_frame *tf);
 void donate_get_highest_priority(struct thread *);
 void donate_priority(void);
 
+void print_ready_list(void);
+void mlfqs_calculate_priority(struct thread *);
+void thread_put_every_list(struct thread *);
+void thread_remove_every_list(struct thread *);
+
+void mlfqs_calculate_recent_cpu(struct thread *);
+void mlfqs_calculate_load_avg(void);
+void increase_recent_cpu(void);
+void recalculate_priority(void);
+void recalculate_recent_cpu(void);
 #endif /* threads/thread.h */

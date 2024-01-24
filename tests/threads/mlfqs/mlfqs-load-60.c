@@ -143,13 +143,15 @@ test_mlfqs_load_60 (void)
 static void
 load_thread (void *aux UNUSED) 
 {
+    struct thread *t = thread_current(); 
   int64_t sleep_time = 10 * TIMER_FREQ;
   int64_t spin_time = sleep_time + 60 * TIMER_FREQ;
-  int64_t exit_time = spin_time + 60 * TIMER_FREQ;
 
+  int64_t exit_time = spin_time + 60 * TIMER_FREQ;
   thread_set_nice (20);
   timer_sleep (sleep_time - timer_elapsed (start_time));
   while (timer_elapsed (start_time) < spin_time)
     continue;
   timer_sleep (exit_time - timer_elapsed (start_time));
 }
+

@@ -68,6 +68,7 @@ initd (void *f_name) {
 
 	if (process_exec (f_name) < 0)
 		PANIC("Fail to launch initd\n");
+    
 	NOT_REACHED ();
 }
 
@@ -175,10 +176,9 @@ process_exec (void *f_name) {
 
 	/* We first kill the current context */
 	process_cleanup ();
-
+    
 	/* And then load the binary */
 	success = load (file_name, &_if);
-
 	/* If load failed, quit. */
 	palloc_free_page (file_name);
 	if (!success)
