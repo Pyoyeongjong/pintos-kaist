@@ -204,6 +204,9 @@ process_wait (tid_t child_tid UNUSED) {
 	/* XXX: Hint) The pintos exit if process_wait (initd), we recommend you
 	 * XXX:       to add infinite loop here before
 	 * XXX:       implementing the process_wait. */
+    for(int i=0;i<999999999999;i++){
+        
+    }
 	return -1;
 }
 
@@ -329,6 +332,17 @@ load (const char *file_name, struct intr_frame *if_) {
 	bool success = false;
 	int i;
 
+    //Parse File Name
+    uint64_t argc=0;
+    char *argv[64];
+
+    char *token;
+    char *save_ptr; 
+
+    for (token = strtok_r (file_name, " ", &save_ptr); token != NULL;
+    token = strtok_r (NULL, " ", &save_ptr)){
+        argv[argc++]=token;
+    }
 	/* Allocate and activate page directory. */
 	t->pml4 = pml4_create ();
 	if (t->pml4 == NULL)
@@ -336,9 +350,9 @@ load (const char *file_name, struct intr_frame *if_) {
 	process_activate (thread_current ());
 
 	/* Open executable file. */
-	file = filesys_open (file_name);
+	file = filesys_open (argv[0]);
 	if (file == NULL) {
-		printf ("load: %s: open failed\n", file_name);
+		printf ("load: %s: open failed\n", argv[0]);
 		goto done;
 	}
 
@@ -350,7 +364,7 @@ load (const char *file_name, struct intr_frame *if_) {
 			|| ehdr.e_version != 1
 			|| ehdr.e_phentsize != sizeof (struct Phdr)
 			|| ehdr.e_phnum > 1024) {
-		printf ("load: %s: error loading executable\n", file_name);
+		printf ("load: %s: error loading executable\n", argv[0]);
 		goto done;
 	}
 
@@ -416,13 +430,52 @@ load (const char *file_name, struct intr_frame *if_) {
 
 	/* TODO: Your code goes here.
 	 * TODO: Implement argument passing (see project2/argument_passing.html). */
+    void **tmp_rsp = &(if_->rsp);
+    put_args_into_stack(argc, argv, tmp_rsp,if_);
 
+    hex_dump(if_->rsp, if_->rsp, USER_STACK - (uint64_t)*tmp_rsp, true);
+    printf("rdi=%d, rsi=%x\n",if_->R.rdi,if_->R.rsi); 
 	success = true;
 
 done:
 	/* We arrive here whether the load is successful or not. */
 	file_close (file);
 	return success;
+}
+
+void
+put_args_into_stack(int argc, char **argv, void **rsp,struct intr_frame *if_ ){
+    
+    for(int i=argc-1; i>=0; i--){
+        char *arg = argv[i];
+        for(int j=strlen(arg); j>=0; j--){
+            (*rsp)--;
+            **(char **)rsp = arg[j];
+        }
+        argv[i]= *(char **)rsp;
+    }
+
+    // word align
+    while((int)(*rsp) % 8 != 0){
+        (*rsp)--;
+        **(uint8_t **)rsp = 0;
+    }
+    // Initial argv makes 0
+    (*rsp) -= 8;
+    **(char ***)rsp = 0;
+    // Fill pointers
+    for(int k=argc-1;k>=0;k--){
+        (*rsp)-=8;
+        **(char ***)rsp = argv[k];
+    }
+    // Fill rsi
+    if_->R.rsi = (uint64_t)(*rsp);
+    // Fill Return address 0
+    (*rsp) -= 8;
+    **(void ***)rsp = 0;
+    // Fill rdi
+    if_->R.rdi = argc;
+    
 }
 
 
