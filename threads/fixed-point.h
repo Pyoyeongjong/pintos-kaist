@@ -1,5 +1,17 @@
 #define F (1<<14)
 
+int conv_i_to_f(int);
+int conv_f_to_i(int);
+int conv_f_to_ni(int);
+int addff(int x, int y);
+int subff(int x, int y);
+int addfi(int x, int n);
+int subfi(int x, int n);
+int muxff(int x, int y);
+int muxfi(int x, int n);
+int divff(int x, int y);
+int divfi(int x, int n);
+
 int conv_i_to_f(int n){
     return n*F;
 }

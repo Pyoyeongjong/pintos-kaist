@@ -20,6 +20,7 @@
 #define RECENT_CPU_DEF 0
 #define LOAD_AVG_DEF 0
 
+
 /* Random value for struct thread's `magic' member.
    Used to detect stack overflow.  See the big comment at the top
    of thread.h for details. */
@@ -222,6 +223,11 @@ thread_create (const char *name, int priority,
 	/* Initialize thread. */
 	init_thread (t, name, priority);
 	tid = t->tid = allocate_tid ();
+    t->fdTable = palloc_get_page(PAL_ZERO);
+    // Project 2
+    // Add this into child list 
+    struct thread *curr = thread_current();
+    list_push_front(&curr->child_list, &t->child_elem);
 	/* Call the kernel_thread if it scheduled.
 	 * Note) rdi is 1st argument, and rsi is 2nd argument. */
 	t->tf.rip = (uintptr_t) kernel_thread;
@@ -535,6 +541,9 @@ init_thread (struct thread *t, const char *name, int priority) {
 	ASSERT (PRI_MIN <= priority && priority <= PRI_MAX);
 	ASSERT (name != NULL);
 
+    //char *name_head, *save_ptr;
+    //name_head = strtok_r(name, " ", &save_ptr);
+
 	memset (t, 0, sizeof *t);
 	t->status = THREAD_BLOCKED;
 	strlcpy (t->name, name, sizeof t->name);
@@ -545,7 +554,13 @@ init_thread (struct thread *t, const char *name, int priority) {
     t->nice=NICE_DEF;
     t->recent_cpu=RECENT_CPU_DEF;
     list_init(&t->donate_list);
+
 	t->magic = THREAD_MAGIC;
+    // Project 2
+    sema_init(&t->fork_sema, 0);
+    sema_init(&t->wait_sema, 0);
+    sema_init(&t->accept_sema, 0);
+    list_init(&t->child_list);
 }
 
 /* Chooses and returns the next thread to be scheduled.  Should
@@ -828,9 +843,5 @@ recalculate_recent_cpu(){
         mlfqs_calculate_recent_cpu(t);
     }
 }
-
-
-
-
 
 

@@ -5,6 +5,7 @@
 #include <list.h>
 #include <stdint.h>
 #include "threads/interrupt.h"
+#include "threads/synch.h"
 #ifdef VM
 #include "vm/vm.h"
 #endif
@@ -92,6 +93,7 @@ struct thread {
 	char name[16];                      /* Name (for debugging purposes). */
 	int priority;                       /* Priority. */
     int priority_origin;
+    int exit_status;
 	int64_t sleeptime;
     /* Priority donation */
     struct list donate_list;
@@ -115,7 +117,18 @@ struct thread {
 #endif
 
 	/* Owned by thread.c. */
+    struct intr_frame parent_if;
 	struct intr_frame tf;               /* Information for switching */
+
+    struct list child_list;
+    struct list_elem child_elem;
+    struct semaphore fork_sema;
+    struct semaphore wait_sema;
+    struct semaphore accept_sema;
+    
+    /* File descriptor */
+    struct file **fdTable;
+
 	unsigned magic;                     /* Detects stack overflow. */
 };
 
@@ -152,7 +165,7 @@ void thread_wakeup(int64_t ticks);
 
 bool thread_compare_sleeptime(const struct list_elem *l, const struct list_elem *s, void *aux UNUSED);
 void thread_confirm_priority_order(void);
-void thead_confirm_priority_order_by_extern_interrupt(void);
+void thread_confirm_priority_order_by_extern_interrupt(void);
 int thread_get_priority (void);
 void thread_set_priority (int);
 bool thread_compare_priority(const struct list_elem *l, const struct list_elem *s, void *aux UNUSED);
@@ -177,4 +190,5 @@ void mlfqs_calculate_load_avg(void);
 void increase_recent_cpu(void);
 void recalculate_priority(void);
 void recalculate_recent_cpu(void);
+
 #endif /* threads/thread.h */

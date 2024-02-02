@@ -1,4 +1,5 @@
 #include "userprog/process.h"
+#include "userprog/syscall.h"
 #include <debug.h>
 #include <inttypes.h>
 #include <round.h>
@@ -77,8 +78,29 @@ initd (void *f_name) {
 tid_t
 process_fork (const char *name, struct intr_frame *if_ UNUSED) {
 	/* Clone current thread to new thread.*/
-	return thread_create (name,
-			PRI_DEFAULT, __do_fork, thread_current ());
+    struct thread *curr = thread_current ();
+    memcpy(&curr->parent_if, if_, sizeof(struct intr_frame));
+    
+    tid_t pid = thread_create (name,PRI_DEFAULT, __do_fork, curr);
+    if(pid == TID_ERROR)
+        return TID_ERROR;
+    struct thread *child = get_child(pid);
+    
+    sema_down(&child->fork_sema);
+    return pid;
+}
+
+struct thread *
+get_child(tid_t pid){
+    struct thread *curr= thread_current ();
+    struct list_elem *e;
+
+    for(e= list_begin(&curr->child_list);e!=list_end(&curr->child_list);e=list_next(e)){
+        struct thread *child = list_entry(e, struct thread, child_elem);
+        if(child->tid == pid)
+            return child;
+    }
+    return NULL;
 }
 
 #ifndef VM
@@ -93,24 +115,39 @@ duplicate_pte (uint64_t *pte, void *va, void *aux) {
 	bool writable;
 
 	/* 1. TODO: If the parent_page is kernel page, then return immediately. */
+    if(is_kernel_vaddr(va)){
+        return true;
+    }
 
 	/* 2. Resolve VA from the parent's page map level 4. */
 	parent_page = pml4_get_page (parent->pml4, va);
+    if(parent_page == NULL){
+        return false;
+    }
 
 	/* 3. TODO: Allocate new PAL_USER page for the child and set result to
 	 *    TODO: NEWPAGE. */
+    newpage = palloc_get_page(PAL_USER | PAL_ZERO);
+    if(newpage == NULL){
+        return false;
+    }
 
 	/* 4. TODO: Duplicate parent's page to the new page and
 	 *    TODO: check whether parent's page is writable or not (set WRITABLE
 	 *    TODO: according to the result). */
+    memcpy(newpage, parent_page, PGSIZE);
+    writable = is_writable(pte);
 
 	/* 5. Add new page to child's page table at address VA with WRITABLE
 	 *    permission. */
 	if (!pml4_set_page (current->pml4, va, newpage, writable)) {
 		/* 6. TODO: if fail to insert page, do error handling. */
+
+        return false;
 	}
 	return true;
 }
+
 #endif
 
 /* A thread function that copies parent's execution context.
@@ -123,7 +160,7 @@ __do_fork (void *aux) {
 	struct thread *parent = (struct thread *) aux;
 	struct thread *current = thread_current ();
 	/* TODO: somehow pass the parent_if. (i.e. process_fork()'s if_) */
-	struct intr_frame *parent_if;
+	struct intr_frame *parent_if = &parent->parent_if;
 	bool succ = true;
 
 	/* 1. Read the cpu context to local stack. */
@@ -131,17 +168,22 @@ __do_fork (void *aux) {
 
 	/* 2. Duplicate PT */
 	current->pml4 = pml4_create();
-	if (current->pml4 == NULL)
+	if (current->pml4 == NULL){
 		goto error;
+    }
 
 	process_activate (current);
 #ifdef VM
 	supplemental_page_table_init (&current->spt);
 	if (!supplemental_page_table_copy (&current->spt, &parent->spt))
+    {
 		goto error;
+    }
 #else
 	if (!pml4_for_each (parent->pml4, duplicate_pte, parent))
+    {
 		goto error;
+    }
 #endif
 
 	/* TODO: Your code goes here.
@@ -150,13 +192,25 @@ __do_fork (void *aux) {
 	 * TODO:       from the fork() until this function successfully duplicates
 	 * TODO:       the resources of parent.*/
 
+    for(int i = 2; i < FD_LIMIT; i++){
+        struct file *f = parent->fdTable[i];
+        if(f == NULL)
+            continue;
+        current->fdTable[i] = file_duplicate(f);
+    }
+    
+    sema_up(&current->fork_sema);
+    if_.R.rax = 0;
 	process_init ();
 
 	/* Finally, switch to the newly created process. */
 	if (succ)
 		do_iret (&if_);
 error:
-	thread_exit ();
+    current->exit_status = TID_ERROR;
+    sema_up(&current->fork_sema);
+    _exit(TID_ERROR);
+	//thread_exit ();
 }
 
 /* Switch the current execution context to the f_name.
@@ -185,7 +239,7 @@ process_exec (void *f_name) {
 		return -1;
 
 	/* Start switched process. */
-	do_iret (&_if);
+    do_iret (&_if);
 	NOT_REACHED ();
 }
 
@@ -204,10 +258,16 @@ process_wait (tid_t child_tid UNUSED) {
 	/* XXX: Hint) The pintos exit if process_wait (initd), we recommend you
 	 * XXX:       to add infinite loop here before
 	 * XXX:       implementing the process_wait. */
-    for(int i=0;i<999999999999;i++){
-        
-    }
-	return -1;
+
+    struct thread *child = get_child(child_tid);
+    if(child == NULL)
+        return -1;
+
+    sema_down(&child->wait_sema);
+    int exit_status = child->exit_status;
+    list_remove(&child->child_elem);
+    sema_up(&child->accept_sema);
+	return exit_status;
 }
 
 /* Exit the process. This function is called by thread_exit (). */
@@ -218,6 +278,10 @@ process_exit (void) {
 	 * TODO: Implement process termination message (see
 	 * TODO: project2/process_termination.html).
 	 * TODO: We recommend you to implement process resource cleanup here. */
+
+
+    sema_up(&curr->wait_sema);
+    sema_down(&curr->accept_sema);
 
 	process_cleanup ();
 }
@@ -338,8 +402,9 @@ load (const char *file_name, struct intr_frame *if_) {
 
     char *token;
     char *save_ptr; 
+    char *fn = file_name;
 
-    for (token = strtok_r (file_name, " ", &save_ptr); token != NULL;
+    for (token = strtok_r (fn, " ", &save_ptr); token != NULL;
     token = strtok_r (NULL, " ", &save_ptr)){
         argv[argc++]=token;
     }
@@ -433,16 +498,20 @@ load (const char *file_name, struct intr_frame *if_) {
     void **tmp_rsp = &(if_->rsp);
     put_args_into_stack(argc, argv, tmp_rsp,if_);
 
-    hex_dump(if_->rsp, if_->rsp, USER_STACK - (uint64_t)*tmp_rsp, true);
-    printf("rdi=%d, rsi=%x\n",if_->R.rdi,if_->R.rsi); 
+    //hex_dump(if_->rsp, if_->rsp, USER_STACK - (uint64_t)*tmp_rsp, true);
+    //printf("rdi=%lld, rsi=%llx\n",if_->R.rdi,if_->R.rsi); 
 	success = true;
 
 done:
 	/* We arrive here whether the load is successful or not. */
 	file_close (file);
-	return success;
+    /*Deny part
+    if(success){
+        file_deny_write(file);
+    }
+    */
+    return success;
 }
-
 void
 put_args_into_stack(int argc, char **argv, void **rsp,struct intr_frame *if_ ){
     
@@ -456,7 +525,7 @@ put_args_into_stack(int argc, char **argv, void **rsp,struct intr_frame *if_ ){
     }
 
     // word align
-    while((int)(*rsp) % 8 != 0){
+    while((int64_t)(*rsp) % 8 != 0){
         (*rsp)--;
         **(uint8_t **)rsp = 0;
     }

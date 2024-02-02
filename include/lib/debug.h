@@ -4,6 +4,7 @@
 /* GCC lets us add "attributes" to functions, function
  * parameters, etc. to indicate their properties.
  * See the GCC manual for details. */
+// Compiler do not warning when add this line ( UNUSED )
 #define UNUSED __attribute__ ((unused))
 #define NO_RETURN __attribute__ ((noreturn))
 #define NO_INLINE __attribute__ ((noinline))
