@@ -50,6 +50,9 @@ process_create_initd (const char *file_name) {
 	if (fn_copy == NULL)
 		return TID_ERROR;
 	strlcpy (fn_copy, file_name, PGSIZE);
+    
+    char *save_ptr;
+    strtok_r(file_name, " ", &save_ptr);
 
 	/* Create a new thread to execute FILE_NAME. */
 	tid = thread_create (file_name, PRI_DEFAULT, initd, fn_copy);
@@ -278,11 +281,14 @@ process_exit (void) {
 	 * TODO: Implement process termination message (see
 	 * TODO: project2/process_termination.html).
 	 * TODO: We recommend you to implement process resource cleanup here. */
-
-
+    file_close(curr->running_file);
     sema_up(&curr->wait_sema);
     sema_down(&curr->accept_sema);
-
+    for(int i=2;i<FD_LIMIT;i++){
+        struct file *f = thread_fd_find(i);
+        file_close(f);
+    }
+    palloc_free_page(curr->fdTable);
 	process_cleanup ();
 }
 
@@ -504,12 +510,10 @@ load (const char *file_name, struct intr_frame *if_) {
 
 done:
 	/* We arrive here whether the load is successful or not. */
-	file_close (file);
-    /*Deny part
     if(success){
+        t->running_file = file;
         file_deny_write(file);
     }
-    */
     return success;
 }
 void

@@ -128,6 +128,7 @@ struct thread {
     
     /* File descriptor */
     struct file **fdTable;
+    struct file *running_file;
 
 	unsigned magic;                     /* Detects stack overflow. */
 };

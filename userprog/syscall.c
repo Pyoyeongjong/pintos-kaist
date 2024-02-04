@@ -117,8 +117,6 @@ void
 _exit(int status){
     struct thread *curr = thread_current();
     curr->exit_status = status;
-    char *token, *save_ptr;
-    token = strtok_r(curr->name, " ", &save_ptr);
     printf("%s: exit(%d)\n",curr->name, curr->exit_status);
     thread_exit();
 }
