@@ -39,7 +39,6 @@ main (int argc UNUSED, char *argv[] UNUSED) {
   byte_cnt += read (fd2, buffer + byte_cnt, 10);
 
   CHECK (dup2 (fd2, fd3) > 1, "first dup2()");
-
   byte_cnt += read (fd3, buffer + byte_cnt, 10);
 
   seek (fd1, 15);
@@ -70,13 +69,12 @@ main (int argc UNUSED, char *argv[] UNUSED) {
   
   fd4 = open ("cheer");
   fd6 = open ("up");
-
   dup2 (fd6, 1);
+  //문제점 : stdout_fileno를 날려버리면 pagefault가 뜬다.
 
   msg ("%d", byte_cnt);
   snprintf (magic, sizeof magic, "%d", byte_cnt);
   write (fd4, magic, strlen (magic));
-
   pid_t pid;
   if (!(pid = fork ("child"))){ // child
     msg ("child begin");

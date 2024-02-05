@@ -102,6 +102,9 @@ syscall_handler (struct intr_frame *f UNUSED) {
         case SYS_CLOSE:
             _close(f->R.rdi);
             break;
+        case SYS_DUP2:
+            f->R.rax = _dup2(f->R.rdi, f->R.rsi);
+            break;
         default:
             _exit(-1);
             break;
@@ -183,12 +186,13 @@ _open (const char *file){
     }
     return fdi;
 }
+//process_exit
 
 
 int
 _filesize (int fd){
     struct file *f = thread_fd_find(fd);    
-    if(f == NULL)
+    if(f == NULL || f == STDIN || f == STDOUT)
         return -1;
     return file_length(f);
 }
@@ -196,10 +200,16 @@ _filesize (int fd){
 int 
 _read(int fd, void *buffer, unsigned size){
 
+    struct thread *curr = thread_current();
     user_memory_access(buffer);
     user_memory_access(buffer + size-1);
+
     unsigned int read_size;
-    if (fd == 0){
+    if(fd < 0 || fd >=FD_LIMIT)
+        return -1;
+
+    struct file *f = thread_fd_find(fd);
+    if (f == STDIN){
         char c;
         char* buff = buffer;
         for (int read_size = 0; read_size < size; read_size++){
@@ -210,18 +220,15 @@ _read(int fd, void *buffer, unsigned size){
         }   
         return read_size;
     }
-    else if (fd == 1){
+    else if (f == STDOUT){
         return -1;
     }
-    else if(fd >= 2 && fd < FD_LIMIT){
-         struct file *f = thread_fd_find(fd);
+    else{
          if(f == NULL)
              return -1;
          read_size = file_read(f, buffer, size); 
          return read_size;
     }
-    else
-        return -1;
 }
 
 int
@@ -229,61 +236,69 @@ _write(int fd, const void *buffer, unsigned size){
 
     user_memory_access(buffer);
     user_memory_access(buffer + size-1);
+    if(fd < 0 || fd >=FD_LIMIT)
+        return -1;
+    struct file *f = thread_fd_find(fd);
 
-    if(fd == 0){
+    if(f == STDIN){
         return -1;
     }
-    else if(fd == 1){
+    else if(f == STDOUT){
         putbuf(buffer, size);
         return size;
     }
-    else if(fd >= 2 && fd < FD_LIMIT){
+    else{
         unsigned int write_size;
-        struct file *f = thread_fd_find(fd);
         if(f == NULL){
             return -1;
         }
         write_size = file_write(f, buffer, size);
         return write_size;
     }
-    else{
-        return -1;
-    }
 }
 
 void
 _seek (int fd, unsigned position){
-    if (fd < 2)
+    if(fd < 0 || fd >=FD_LIMIT)
         return;
     struct file *f = thread_fd_find(fd);
-    if(f == NULL)
+    if (f == NULL || f == STDIN || f == STDOUT)
         return;
     file_seek(f, position); 
 }
 
 unsigned
 _tell (int fd){
-    if (fd < 2)
+    if(fd < 0 || fd >=FD_LIMIT)
         return -1;
     struct file *f = thread_fd_find(fd);
-    if(f == NULL)
+    if(f == NULL || f == STDIN || f == STDOUT)
         return -1;
     return file_tell(f);
 }
 
 void
 _close (int fd){
+    if(fd < 0 || fd >=FD_LIMIT)
+        return;
     struct file *f = thread_fd_find(fd);
     if(f == NULL)
         return;
     thread_fd_delete(fd);
+    if(f == STDIN || f == STDOUT){
+        return;
+    }
+
     file_close(f);
     return;
 }
+//close
+
+
 int
 thread_fd_insert(struct file *f){
     struct thread *curr = thread_current();
-    int fdi = 2;
+    int fdi = 0;
     while(fdi < FD_LIMIT && curr->fdTable[fdi]!=NULL){
         fdi++;
     }
@@ -304,7 +319,7 @@ thread_fd_delete(int fd){
 
 }
 
-struct file*
+struct file *
 thread_fd_find(int fd){
     struct thread *curr = thread_current();
     if(fd < 0 || fd>=FD_LIMIT)
@@ -313,7 +328,30 @@ thread_fd_find(int fd){
 }
 
 
+int
+_dup2(int oldfd, int newfd){
+    
+    struct thread *curr = thread_current();
+    if(oldfd < 0 || oldfd >= FD_LIMIT || newfd < 0 || newfd >= FD_LIMIT)
+        return -1;
 
+    struct file *oldf = thread_fd_find(oldfd);
+
+    if(oldf == NULL)
+        return -1;
+    if(oldfd == newfd){
+        return newfd;
+    }
+    
+    if(oldf != STDIN && oldf != STDOUT)
+        oldf->dup2_count += 1;
+     
+    _close(newfd);
+    curr->fdTable[newfd] = oldf;
+    return newfd;
+    
+    return 0;
+}
 
 
 

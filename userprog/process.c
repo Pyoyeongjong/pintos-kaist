@@ -195,11 +195,21 @@ __do_fork (void *aux) {
 	 * TODO:       from the fork() until this function successfully duplicates
 	 * TODO:       the resources of parent.*/
 
-    for(int i = 2; i < FD_LIMIT; i++){
+    for(int i = 0; i < FD_LIMIT; i++){
         struct file *f = parent->fdTable[i];
         if(f == NULL)
             continue;
-        current->fdTable[i] = file_duplicate(f);
+        if(f == STDIN){
+            current->fdTable[i] = STDIN;
+            continue;
+        }
+        else if(f == STDOUT){
+            current->fdTable[i] = STDOUT;
+            continue;
+        }
+        else{
+            current->fdTable[i] = file_duplicate(f);
+        }
     }
     
     sema_up(&current->fork_sema);
@@ -284,11 +294,14 @@ process_exit (void) {
     file_close(curr->running_file);
     sema_up(&curr->wait_sema);
     sema_down(&curr->accept_sema);
-    for(int i=2;i<FD_LIMIT;i++){
+    
+    for(int i=0;i<FD_LIMIT;i++){
         struct file *f = thread_fd_find(i);
+        if(f == NULL || f == STDIN || f == STDOUT)
+            continue;
         file_close(f);
     }
-    palloc_free_page(curr->fdTable);
+    palloc_free_multiple(curr->fdTable, 3);
 	process_cleanup ();
 }
 

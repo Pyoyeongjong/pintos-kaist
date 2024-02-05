@@ -223,9 +223,11 @@ thread_create (const char *name, int priority,
 	/* Initialize thread. */
 	init_thread (t, name, priority);
 	tid = t->tid = allocate_tid ();
-    t->fdTable = palloc_get_page(PAL_ZERO);
+    t->fdTable = palloc_get_multiple(PAL_ZERO, 3);
     if(t->fdTable == NULL)
         return TID_ERROR;
+    t->fdTable[STDIN_FILENO] = STDIN;
+    t->fdTable[STDOUT_FILENO] = STDOUT;
     // Project 2
     // Add this into child list 
     struct thread *curr = thread_current();

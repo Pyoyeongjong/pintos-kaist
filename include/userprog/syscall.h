@@ -4,7 +4,10 @@
 #include <stdbool.h>
 #include "threads/interrupt.h"
 #include "filesys/file.h"
-#define FD_LIMIT 256
+#define FD_LIMIT 0x200
+//thread_create
+//process_exit
+
 void syscall_init (void);
 
 void user_memory_access(void*);

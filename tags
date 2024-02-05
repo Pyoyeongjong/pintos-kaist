@@ -99,9 +99,9 @@ E820_MAP4	include/threads/loader.h	21;"	d
 EFER_LME	threads/start.S	/^#define EFER_LME (1 << 8)$/;"	d
 EFER_MSR	threads/start.S	/^#define EFER_MSR 0xC0000080$/;"	d
 EFER_SCE	threads/start.S	/^#define EFER_SCE (1 << 0)$/;"	d
-EI_NIDENT	userprog/process.c	337;"	d	file:
+EI_NIDENT	userprog/process.c	350;"	d	file:
 ELEM_BITS	lib/kernel/bitmap.c	22;"	d	file:
-ELF	userprog/process.c	383;"	d	file:
+ELF	userprog/process.c	396;"	d	file:
 ELF64_PHDR	userprog/process.c	/^struct ELF64_PHDR {$/;"	s	file:
 ELF64_hdr	userprog/process.c	/^struct ELF64_hdr {$/;"	s	file:
 EOChain	include/filesys/fat.h	14;"	d
@@ -261,11 +261,11 @@ PDPESHIFT	include/threads/pte.h	21;"	d
 PDX	include/threads/pte.h	27;"	d
 PDXSHIFT	include/threads/pte.h	22;"	d
 PF_P	include/userprog/exception.h	5;"	d
-PF_R	userprog/process.c	350;"	d	file:
+PF_R	userprog/process.c	363;"	d	file:
 PF_U	include/userprog/exception.h	7;"	d
 PF_W	include/userprog/exception.h	6;"	d
-PF_W	userprog/process.c	349;"	d	file:
-PF_X	userprog/process.c	348;"	d	file:
+PF_W	userprog/process.c	362;"	d	file:
+PF_X	userprog/process.c	361;"	d	file:
 PGBITS	include/threads/vaddr.h	19;"	d
 PGMASK	include/threads/vaddr.h	21;"	d
 PGSHIFT	include/threads/vaddr.h	18;"	d
@@ -334,15 +334,15 @@ PTRDIFF_MAX	include/lib/stdint.h	47;"	d
 PTRDIFF_MIN	include/lib/stdint.h	46;"	d
 PTX	include/threads/pte.h	28;"	d
 PTXSHIFT	include/threads/pte.h	23;"	d
-PT_DYNAMIC	userprog/process.c	341;"	d	file:
-PT_INTERP	userprog/process.c	342;"	d	file:
-PT_LOAD	userprog/process.c	340;"	d	file:
-PT_NOTE	userprog/process.c	343;"	d	file:
-PT_NULL	userprog/process.c	339;"	d	file:
-PT_PHDR	userprog/process.c	345;"	d	file:
-PT_SHLIB	userprog/process.c	344;"	d	file:
-PT_STACK	userprog/process.c	346;"	d	file:
-Phdr	userprog/process.c	384;"	d	file:
+PT_DYNAMIC	userprog/process.c	354;"	d	file:
+PT_INTERP	userprog/process.c	355;"	d	file:
+PT_LOAD	userprog/process.c	353;"	d	file:
+PT_NOTE	userprog/process.c	356;"	d	file:
+PT_NULL	userprog/process.c	352;"	d	file:
+PT_PHDR	userprog/process.c	358;"	d	file:
+PT_SHLIB	userprog/process.c	357;"	d	file:
+PT_STACK	userprog/process.c	359;"	d	file:
+Phdr	userprog/process.c	397;"	d	file:
 Prev	tests/Algorithm/Diff.pm	/^sub Prev {$/;"	s
 QUEUE	devices/serial.c	/^static enum { UNINIT, POLL, QUEUE } mode;$/;"	e	enum:__anon3	file:
 R	include/threads/interrupt.h	/^	struct gp_registers R;$/;"	m	struct:intr_frame	typeref:struct:intr_frame::gp_registers
@@ -382,7 +382,9 @@ SPACE	lib/stdio.c	/^		SPACE = 1 << 2,         \/* ' ' *\/$/;"	e	enum:printf_conv
 STA_BSY	devices/disk.c	32;"	d	file:
 STA_DRDY	devices/disk.c	33;"	d	file:
 STA_DRQ	devices/disk.c	34;"	d	file:
+STDIN	include/threads/thread.h	31;"	d
 STDIN_FILENO	include/lib/stdio.h	15;"	d
+STDOUT	include/threads/thread.h	32;"	d
 STDOUT_FILENO	include/lib/stdio.h	16;"	d
 STUB	threads/intr-stubs.S	/^#define STUB(NUMBER, TYPE)                      \\$/;"	d
 SYS_CHDIR	include/lib/syscall-nr.h	/^	SYS_CHDIR,                  \/* Change the current directory. *\/$/;"	e	enum:__anon1
@@ -551,6 +553,7 @@ __unused	threads/palloc.c	/^	uint32_t __unused[8];$/;"	m	struct:multiboot_info	f
 __vprintf	lib/stdio.c	/^__vprintf (const char *format, va_list args,$/;"	f
 _close	userprog/syscall.c	/^_close (int fd){$/;"	f
 _create	userprog/syscall.c	/^_create (const char *file, unsigned initial_size){ $/;"	f
+_dup2	userprog/syscall.c	/^_dup2(int oldfd, int newfd){$/;"	f
 _exec	userprog/syscall.c	/^_exec (const char *cmd_line){$/;"	f
 _exit	userprog/syscall.c	/^_exit(int status){$/;"	f
 _filesize	userprog/syscall.c	/^_filesize (int fd){$/;"	f
@@ -797,7 +800,7 @@ db	userprog/gdt.c	/^	unsigned db : 1;$/;"	m	struct:segment_desc	file:
 debug_backtrace	lib/debug.c	/^debug_backtrace (void) {$/;"	f
 debug_panic	lib/kernel/debug.c	/^debug_panic (const char *file, int line, const char *function,$/;"	f
 debug_panic	lib/user/debug.c	/^debug_panic (const char *file, int line, const char *function,$/;"	f
-deny_write	filesys/file.c	/^	bool deny_write;            \/* Has file_deny_write() been called? *\/$/;"	m	struct:file	file:
+deny_write	include/filesys/file.h	/^	bool deny_write;            \/* Has file_deny_write() been called? *\/$/;"	m	struct:file
 deny_write_cnt	filesys/inode.c	/^	int deny_write_cnt;                 \/* 0: writes ok, >0: deny writes. *\/$/;"	m	struct:inode	file:
 desc	threads/malloc.c	/^	struct desc *desc;          \/* Owning descriptor, null for big block. *\/$/;"	m	struct:arena	typeref:struct:arena::desc	file:
 desc	threads/malloc.c	/^struct desc {$/;"	s	file:
@@ -858,6 +861,7 @@ dpl	userprog/gdt.c	/^	unsigned dpl : 2;$/;"	m	struct:segment_descriptor64	file:
 ds	include/threads/interrupt.h	/^	uint16_t ds;$/;"	m	struct:intr_frame
 dst	tests/userprog/boundary.c	/^static char dst[8192];$/;"	v	file:
 dup2	lib/user/syscall.c	/^dup2 (int oldfd, int newfd){$/;"	f
+dup2_count	include/filesys/file.h	/^    long long int dup2_count;$/;"	m	struct:file
 duplicate_pte	userprog/process.c	/^duplicate_pte (uint64_t *pte, void *va, void *aux) {$/;"	f	file:
 duration	tests/threads/alarm-wait.c	/^    int duration;               \/* Number of ticks to sleep. *\/$/;"	m	struct:sleep_thread	file:
 e820_entry	threads/palloc.c	/^struct e820_entry {$/;"	s	file:
@@ -922,7 +926,7 @@ fat_sectors	filesys/fat.c	/^	unsigned int fat_sectors; \/* Size of FAT in sector
 fat_start	filesys/fat.c	/^	unsigned int fat_start;$/;"	m	struct:fat_boot	file:
 fb	devices/vga.c	/^static uint8_t (*fb)[COL_CNT][2];$/;"	v	file:
 fdTable	include/threads/thread.h	/^    struct file **fdTable;$/;"	m	struct:thread	typeref:struct:thread::file
-file	filesys/file.c	/^struct file {$/;"	s	file:
+file	include/filesys/file.h	/^struct file {$/;"	s
 file	include/vm/vm.h	/^		struct file_page file;$/;"	m	union:page::__anon2	typeref:struct:page::__anon2::file_page
 file_allow_write	filesys/file.c	/^file_allow_write (struct file *file) {$/;"	f
 file_backed_destroy	vm/file.c	/^file_backed_destroy (struct page *page) {$/;"	f	file:
@@ -1082,8 +1086,8 @@ inited	lib/random.c	/^static bool inited;     $/;"	v	file:
 initial_thread	threads/thread.c	/^static struct thread *initial_thread;$/;"	v	typeref:struct:thread	file:
 inl	include/threads/io.h	/^inl (uint16_t port) {$/;"	f
 inode	filesys/directory.c	/^	struct inode *inode;                \/* Backing store. *\/$/;"	m	struct:dir	typeref:struct:dir::inode	file:
-inode	filesys/file.c	/^	struct inode *inode;        \/* File's inode. *\/$/;"	m	struct:file	typeref:struct:file::inode	file:
 inode	filesys/inode.c	/^struct inode {$/;"	s	file:
+inode	include/filesys/file.h	/^	struct inode *inode;        \/* File's inode. *\/$/;"	m	struct:file	typeref:struct:file::inode
 inode_allow_write	filesys/inode.c	/^inode_allow_write (struct inode *inode) {$/;"	f
 inode_close	filesys/inode.c	/^inode_close (struct inode *inode) {$/;"	f
 inode_create	filesys/inode.c	/^inode_create (disk_sector_t sector, off_t length) {$/;"	f
@@ -1482,7 +1486,7 @@ pml4e_walk	threads/mmu.c	/^pml4e_walk (uint64_t *pml4e, const uint64_t va, int c
 pool	threads/palloc.c	/^struct pool {$/;"	s	file:
 populate_pools	threads/palloc.c	/^populate_pools (struct area *base_mem, struct area *ext_mem) {$/;"	f	file:
 pos	filesys/directory.c	/^	off_t pos;                          \/* Current position. *\/$/;"	m	struct:dir	file:
-pos	filesys/file.c	/^	off_t pos;                  \/* Current position. *\/$/;"	m	struct:file	file:
+pos	include/filesys/file.h	/^	off_t pos;                  \/* Current position. *\/$/;"	m	struct:file
 power_off	threads/init.c	/^power_off (void) {$/;"	f
 power_off_when_done	threads/init.c	/^bool power_off_when_done;$/;"	v
 precision	lib/stdio.c	/^	int precision;$/;"	m	struct:printf_conversion	file:
