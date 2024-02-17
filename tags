@@ -31,7 +31,7 @@ BUF_SIZE	tests/filesys/base/syn-write.h	6;"	d
 BUF_SIZE	tests/filesys/extended/syn-rw.h	6;"	d
 BUILD_SUBDIRS	Makefile	/^BUILD_SUBDIRS = threads userprog vm filesys$/;"	m
 Base	tests/Algorithm/Diff.pm	/^sub Base$/;"	s
-CHANNEL_CNT	devices/disk.c	80;"	d	file:
+CHANNEL_CNT	devices/disk.c	68;"	d	file:
 CHAR	lib/stdio.c	/^		CHAR = 1,               \/* hh *\/$/;"	e	enum:printf_conversion::__anon5	file:
 CHAR_BIT	include/lib/limits.h	4;"	d
 CHAR_MAX	include/lib/limits.h	12;"	d
@@ -87,7 +87,7 @@ DEV_DEV	devices/disk.c	42;"	d	file:
 DEV_LBA	devices/disk.c	41;"	d	file:
 DEV_MBS	devices/disk.c	40;"	d	file:
 DIRECTORY	tests/filesys/extended/grow-dir-lg.c	5;"	d	file:
-DISK_SECTOR_SIZE	include/devices/disk.h	8;"	d
+DISK_SECTOR_SIZE	include/devices/disk.h	9;"	d
 DISK_SIZE	tests/filesys/extended/symlink-dir.c	12;"	d	file:
 DISK_SIZE	tests/filesys/extended/symlink-file.c	14;"	d	file:
 DISK_SIZE	tests/filesys/extended/symlink-link.c	12;"	d	file:
@@ -99,9 +99,9 @@ E820_MAP4	include/threads/loader.h	21;"	d
 EFER_LME	threads/start.S	/^#define EFER_LME (1 << 8)$/;"	d
 EFER_MSR	threads/start.S	/^#define EFER_MSR 0xC0000080$/;"	d
 EFER_SCE	threads/start.S	/^#define EFER_SCE (1 << 0)$/;"	d
-EI_NIDENT	userprog/process.c	350;"	d	file:
+EI_NIDENT	userprog/process.c	351;"	d	file:
 ELEM_BITS	lib/kernel/bitmap.c	22;"	d	file:
-ELF	userprog/process.c	396;"	d	file:
+ELF	userprog/process.c	397;"	d	file:
 ELF64_PHDR	userprog/process.c	/^struct ELF64_PHDR {$/;"	s	file:
 ELF64_hdr	userprog/process.c	/^struct ELF64_hdr {$/;"	s	file:
 EOChain	include/filesys/fat.h	14;"	d
@@ -261,11 +261,11 @@ PDPESHIFT	include/threads/pte.h	21;"	d
 PDX	include/threads/pte.h	27;"	d
 PDXSHIFT	include/threads/pte.h	22;"	d
 PF_P	include/userprog/exception.h	5;"	d
-PF_R	userprog/process.c	363;"	d	file:
+PF_R	userprog/process.c	364;"	d	file:
 PF_U	include/userprog/exception.h	7;"	d
 PF_W	include/userprog/exception.h	6;"	d
-PF_W	userprog/process.c	362;"	d	file:
-PF_X	userprog/process.c	361;"	d	file:
+PF_W	userprog/process.c	363;"	d	file:
+PF_X	userprog/process.c	362;"	d	file:
 PGBITS	include/threads/vaddr.h	19;"	d
 PGMASK	include/threads/vaddr.h	21;"	d
 PGSHIFT	include/threads/vaddr.h	18;"	d
@@ -276,7 +276,7 @@ PML4	include/threads/pte.h	25;"	d
 PML4SHIFT	include/threads/pte.h	20;"	d
 POLL	devices/serial.c	/^static enum { UNINIT, POLL, QUEUE } mode;$/;"	e	enum:__anon3	file:
 POUND	lib/stdio.c	/^		POUND = 1 << 3,         \/* '#' *\/$/;"	e	enum:printf_conversion::__anon4	file:
-PRDSNu	include/devices/disk.h	16;"	d
+PRDSNu	include/devices/disk.h	17;"	d
 PRINTF_FORMAT	include/lib/debug.h	11;"	d
 PRIX16	include/lib/inttypes.h	18;"	d
 PRIX32	include/lib/inttypes.h	25;"	d
@@ -334,15 +334,15 @@ PTRDIFF_MAX	include/lib/stdint.h	47;"	d
 PTRDIFF_MIN	include/lib/stdint.h	46;"	d
 PTX	include/threads/pte.h	28;"	d
 PTXSHIFT	include/threads/pte.h	23;"	d
-PT_DYNAMIC	userprog/process.c	354;"	d	file:
-PT_INTERP	userprog/process.c	355;"	d	file:
-PT_LOAD	userprog/process.c	353;"	d	file:
-PT_NOTE	userprog/process.c	356;"	d	file:
-PT_NULL	userprog/process.c	352;"	d	file:
-PT_PHDR	userprog/process.c	358;"	d	file:
-PT_SHLIB	userprog/process.c	357;"	d	file:
-PT_STACK	userprog/process.c	359;"	d	file:
-Phdr	userprog/process.c	397;"	d	file:
+PT_DYNAMIC	userprog/process.c	355;"	d	file:
+PT_INTERP	userprog/process.c	356;"	d	file:
+PT_LOAD	userprog/process.c	354;"	d	file:
+PT_NOTE	userprog/process.c	357;"	d	file:
+PT_NULL	userprog/process.c	353;"	d	file:
+PT_PHDR	userprog/process.c	359;"	d	file:
+PT_SHLIB	userprog/process.c	358;"	d	file:
+PT_STACK	userprog/process.c	360;"	d	file:
+Phdr	userprog/process.c	398;"	d	file:
 Prev	tests/Algorithm/Diff.pm	/^sub Prev {$/;"	s
 QUEUE	devices/serial.c	/^static enum { UNINIT, POLL, QUEUE } mode;$/;"	e	enum:__anon3	file:
 R	include/threads/interrupt.h	/^	struct gp_registers R;$/;"	m	struct:intr_frame	typeref:struct:intr_frame::gp_registers
@@ -727,12 +727,12 @@ bytes_to_sectors	filesys/inode.c	/^bytes_to_sectors (off_t size) {$/;"	f	file:
 c_thread_func	tests/threads/priority-donate-multiple2.c	/^c_thread_func (void *a_ UNUSED) $/;"	f	file:
 c_thread_func	tests/threads/priority-donate-multiple2.c	/^static thread_func c_thread_func;$/;"	v	file:
 calloc	threads/malloc.c	/^calloc (size_t a, size_t b) {$/;"	f
-capacity	devices/disk.c	/^	disk_sector_t capacity;     \/* Capacity in sectors (if is_ata). *\/$/;"	m	struct:disk	file:
+capacity	include/devices/disk.h	/^	disk_sector_t capacity;     \/* Capacity in sectors (if is_ata). *\/$/;"	m	struct:disk
 caps_lock	devices/kbd.c	/^static bool caps_lock;$/;"	v	file:
 changing_thread	tests/threads/priority-change.c	/^changing_thread (void *aux UNUSED) $/;"	f	file:
 changing_thread	tests/threads/priority-change.c	/^static thread_func changing_thread;$/;"	v	file:
-channel	devices/disk.c	/^	struct channel *channel;    \/* Channel disk is on. *\/$/;"	m	struct:disk	typeref:struct:disk::channel	file:
 channel	devices/disk.c	/^struct channel {$/;"	s	file:
+channel	include/devices/disk.h	/^	struct channel *channel;    \/* Channel disk is on. *\/$/;"	m	struct:disk	typeref:struct:disk::channel
 channels	devices/disk.c	/^static struct channel channels[CHANNEL_CNT];$/;"	v	typeref:struct:channel	file:
 char_cnt	lib/user/console.c	/^	int char_cnt;       \/* Total characters written so far. *\/$/;"	m	struct:vhprintf_aux	file:
 chars	devices/kbd.c	/^	const char *chars;          \/* chars[0] has scancode first_scancode,$/;"	m	struct:keymap	file:
@@ -808,9 +808,9 @@ desc_cnt	threads/malloc.c	/^static size_t desc_cnt;         \/* Number of descri
 desc_ptr	include/threads/mmu.h	/^struct desc_ptr {$/;"	s
 descs	threads/malloc.c	/^static struct desc descs[10];   \/* Descriptors. *\/$/;"	v	typeref:struct:desc	file:
 destroy	include/vm/vm.h	/^	void (*destroy) (struct page *);$/;"	m	struct:page_operations
-destroy	include/vm/vm.h	81;"	d
+destroy	include/vm/vm.h	85;"	d
 destruction_req	threads/thread.c	/^static struct list destruction_req;$/;"	v	typeref:struct:list	file:
-dev_no	devices/disk.c	/^	int dev_no;                 \/* Device 0 or 1 for master or slave. *\/$/;"	m	struct:disk	file:
+dev_no	include/devices/disk.h	/^	int dev_no;                 \/* Device 0 or 1 for master or slave. *\/$/;"	m	struct:disk
 devices	devices/disk.c	/^	struct disk devices[2];     \/* The devices on this channel. *\/$/;"	m	struct:channel	typeref:struct:channel::disk	file:
 devices_SRC	devices/targets.mk	/^devices_SRC  = devices\/timer.c		# Timer device.$/;"	m
 diff	tests/Algorithm/Diff.pm	/^sub diff$/;"	s
@@ -827,7 +827,7 @@ dir_open_root	filesys/directory.c	/^dir_open_root (void) {$/;"	f
 dir_readdir	filesys/directory.c	/^dir_readdir (struct dir *dir, char name[NAME_MAX + 1]) {$/;"	f
 dir_remove	filesys/directory.c	/^dir_remove (struct dir *dir, const char *name) {$/;"	f
 dir_reopen	filesys/directory.c	/^dir_reopen (struct dir *dir) {$/;"	f
-disk	devices/disk.c	/^struct disk {$/;"	s	file:
+disk	include/devices/disk.h	/^struct disk {$/;"	s
 disk_get	devices/disk.c	/^disk_get (int chan_no, int dev_no) {$/;"	f
 disk_init	devices/disk.c	/^disk_init (void) {$/;"	f
 disk_print_stats	devices/disk.c	/^disk_print_stats (void) {$/;"	f
@@ -884,6 +884,7 @@ eflags	include/threads/interrupt.h	/^	uint64_t eflags;$/;"	m	struct:intr_frame
 elem	filesys/inode.c	/^	struct list_elem elem;              \/* Element in inode list. *\/$/;"	m	struct:inode	typeref:struct:inode::list_elem	file:
 elem	include/lib/kernel/hash.h	/^	struct hash_elem *elem;     \/* Current hash element in current bucket. *\/$/;"	m	struct:hash_iterator	typeref:struct:hash_iterator::hash_elem
 elem	include/threads/thread.h	/^    struct list_elem elem;              \/* List element. *\/$/;"	m	struct:thread	typeref:struct:thread::list_elem
+elem	include/vm/vm.h	/^    struct list_elem elem;$/;"	m	struct:frame	typeref:struct:frame::list_elem
 elem	tests/internal/list.c	/^    struct list_elem elem;      \/* List element. *\/$/;"	m	struct:value	typeref:struct:value::list_elem	file:
 elem	threads/synch.c	/^	struct list_elem elem;              \/* List element. *\/$/;"	m	struct:semaphore_elem	typeref:struct:semaphore_elem::list_elem	file:
 elem_cnt	include/lib/kernel/hash.h	/^	size_t elem_cnt;            \/* Number of elements in table. *\/$/;"	m	struct:hash
@@ -927,6 +928,7 @@ fat_start	filesys/fat.c	/^	unsigned int fat_start;$/;"	m	struct:fat_boot	file:
 fb	devices/vga.c	/^static uint8_t (*fb)[COL_CNT][2];$/;"	v	file:
 fdTable	include/threads/thread.h	/^    struct file **fdTable;$/;"	m	struct:thread	typeref:struct:thread::file
 file	include/filesys/file.h	/^struct file {$/;"	s
+file	include/userprog/process.h	/^    struct file* file;$/;"	m	struct:lazy_load_aux	typeref:struct:lazy_load_aux::file
 file	include/vm/vm.h	/^		struct file_page file;$/;"	m	union:page::__anon2	typeref:struct:page::__anon2::file_page
 file_allow_write	filesys/file.c	/^file_allow_write (struct file *file) {$/;"	f
 file_backed_destroy	vm/file.c	/^file_backed_destroy (struct page *page) {$/;"	f	file:
@@ -982,6 +984,7 @@ format_integer	lib/stdio.c	/^format_integer (uintmax_t value, bool is_signed, bo
 format_string	lib/stdio.c	/^format_string (const char *string, int length,$/;"	f	file:
 frame	include/vm/vm.h	/^	struct frame *frame;   \/* Back reference for frame *\/$/;"	m	struct:page	typeref:struct:page::frame
 frame	include/vm/vm.h	/^struct frame {$/;"	s
+frame_table	vm/vm.c	/^struct list frame_table;$/;"	v	typeref:struct:list
 free	threads/malloc.c	/^free (void *p) {$/;"	f
 free_cnt	threads/malloc.c	/^	size_t free_cnt;            \/* Free blocks; pages in big block. *\/$/;"	m	struct:arena	file:
 free_elem	threads/malloc.c	/^	struct list_elem free_elem; \/* Free list element. *\/$/;"	m	struct:block	typeref:struct:block::list_elem	file:
@@ -1115,6 +1118,7 @@ inspect	vm/inspect.c	/^inspect (struct intr_frame *f) {$/;"	f	file:
 inspect_read_cnt	devices/disk.c	/^inspect_read_cnt (struct intr_frame *f) {$/;"	f	file:
 inspect_write_cnt	devices/disk.c	/^inspect_write_cnt (struct intr_frame *f) {$/;"	f	file:
 install_page	userprog/process.c	/^install_page (void *upage, void *kpage, bool writable) {$/;"	f	file:
+install_page	vm/vm.c	/^install_page (void *upage, void *kpage, bool writable) {$/;"	f	file:
 insw	include/threads/io.h	/^insw (uint16_t port, void *addr, size_t cnt) {$/;"	f
 int16_t	include/lib/stdint.h	/^typedef signed short int int16_t;$/;"	t
 int32_t	include/lib/stdint.h	/^typedef signed int int32_t;$/;"	t
@@ -1158,7 +1162,7 @@ invlpg	include/intrinsic.h	/^static __inline void invlpg(uint64_t addr) {$/;"	f
 inw	include/threads/io.h	/^inw (uint16_t port) {$/;"	f
 iomb	include/userprog/tss.h	/^	uint16_t iomb;$/;"	m	struct:task_state
 irq	devices/disk.c	/^	uint8_t irq;                \/* Interrupt in use. *\/$/;"	m	struct:channel	file:
-is_ata	devices/disk.c	/^	bool is_ata;                \/* 1=This device is an ATA disk. *\/$/;"	m	struct:disk	file:
+is_ata	include/devices/disk.h	/^	bool is_ata;                \/* 1=This device is an ATA disk. *\/$/;"	m	struct:disk
 is_dir	tests/tests.pm	/^sub is_dir {$/;"	s
 is_head	lib/kernel/list.c	/^is_head (struct list_elem *elem) {$/;"	f	file:
 is_interior	lib/kernel/list.c	/^is_interior (struct list_elem *elem) {$/;"	f	file:
@@ -1218,6 +1222,7 @@ l_thread_func	tests/threads/priority-donate-sema.c	/^l_thread_func (void *ls_) $
 l_thread_func	tests/threads/priority-donate-sema.c	/^static thread_func l_thread_func;$/;"	v	file:
 last_clst	filesys/fat.c	/^	cluster_t last_clst;$/;"	m	struct:fat_fs	file:
 last_mask	lib/kernel/bitmap.c	/^last_mask (const struct bitmap *b) {$/;"	f	file:
+lazy_load_aux	include/userprog/process.h	/^struct lazy_load_aux{$/;"	s
 lazy_load_segment	userprog/process.c	/^lazy_load_segment (struct page *page, void *aux) {$/;"	f	file:
 lcr3	include/intrinsic.h	/^static __inline void lcr3(uint64_t val) {$/;"	f
 left_alt	devices/kbd.c	/^static bool left_alt, right_alt;        \/* Left and right Alt keys. *\/$/;"	v	file:
@@ -1367,8 +1372,8 @@ munmap	lib/user/syscall.c	/^munmap (void *addr) {$/;"	f
 muxff	threads/fixed-point.h	/^int muxff(int x, int y){$/;"	f
 muxfi	threads/fixed-point.h	/^int muxfi(int x, int n){$/;"	f
 name	devices/disk.c	/^	char name[8];               \/* Name, e.g. "hd0". *\/$/;"	m	struct:channel	file:
-name	devices/disk.c	/^	char name[8];               \/* Name, e.g. "hd0:1". *\/$/;"	m	struct:disk	file:
 name	filesys/directory.c	/^	char name[NAME_MAX + 1];            \/* Null terminated file name. *\/$/;"	m	struct:dir_entry	file:
+name	include/devices/disk.h	/^	char name[8];               \/* Name, e.g. "hd0:1". *\/$/;"	m	struct:disk
 name	include/threads/thread.h	/^	char name[16];                      \/* Name (for debugging purposes). *\/$/;"	m	struct:thread
 name	tests/threads/tests.c	/^    const char *name;$/;"	m	struct:test	file:
 new	tests/Algorithm/Diff.pm	/^sub new$/;"	s
@@ -1390,6 +1395,7 @@ off_32_63	threads/interrupt.c	/^	uint32_t off_32_63;$/;"	m	struct:gate	file:
 off_t	include/filesys/off_t.h	/^typedef int32_t off_t;$/;"	t
 off_t	include/lib/user/syscall.h	/^typedef int off_t;$/;"	t
 offsetof	include/lib/stddef.h	5;"	d
+ofs	include/userprog/process.h	/^    int ofs;$/;"	m	struct:lazy_load_aux
 op	tests/threads/priority-fifo.c	/^    int **op;                   \/* Output buffer position. *\/$/;"	m	struct:simple_thread_data	file:
 open	lib/user/syscall.c	/^open (const char *file) {$/;"	f
 open_cnt	filesys/inode.c	/^	int open_cnt;                       \/* Number of openers. *\/$/;"	m	struct:inode	file:
@@ -1437,6 +1443,8 @@ page_from_pool	threads/palloc.c	/^page_from_pool (const struct pool *pool, void 
 page_get_type	vm/vm.c	/^page_get_type (struct page *page) {$/;"	f
 page_initializer	include/vm/uninit.h	/^	bool (*page_initializer) (struct page *, enum vm_type, void *kva);$/;"	m	struct:uninit_page
 page_operations	include/vm/vm.h	/^struct page_operations {$/;"	s
+page_read_bytes	include/userprog/process.h	/^    int page_read_bytes;$/;"	m	struct:lazy_load_aux
+page_zero_bytes	include/userprog/process.h	/^    int page_zero_bytes;$/;"	m	struct:lazy_load_aux
 pagecache_init	filesys/page_cache.c	/^pagecache_init (void) {$/;"	f
 paging_init	threads/init.c	/^paging_init (uint64_t mem_end) {$/;"	f	file:
 palloc_flags	include/threads/palloc.h	/^enum palloc_flags {$/;"	g
@@ -1556,7 +1564,7 @@ rdx	include/threads/interrupt.h	/^	uint64_t rdx;$/;"	m	struct:gp_registers
 reach	threads/thread.c	/^void reach(void){$/;"	f
 reachvar	threads/thread.c	/^bool reachvar = false;$/;"	v
 read	lib/user/syscall.c	/^read (int fd, void *buffer, unsigned size) {$/;"	f
-read_cnt	devices/disk.c	/^	long long read_cnt;         \/* Number of sectors read. *\/$/;"	m	struct:disk	file:
+read_cnt	include/devices/disk.h	/^	long long read_cnt;         \/* Number of sectors read. *\/$/;"	m	struct:disk
 read_command_line	threads/init.c	/^read_command_line (void) {$/;"	f	file:
 read_eflags	include/intrinsic.h	/^static __inline uint64_t read_eflags(void) {$/;"	f
 read_sector	threads/loader.S	/^read_sector:$/;"	l
@@ -1697,8 +1705,10 @@ sort_chunks	tests/vm/page-merge-seq.c	/^sort_chunks (void)$/;"	f	file:
 sort_chunks	tests/vm/parallel-merge.c	/^sort_chunks (const char *subprocess, int exit_status)$/;"	f	file:
 sprintf	include/lib/stdio.h	36;"	d
 spt	include/threads/thread.h	/^	struct supplemental_page_table spt;$/;"	m	struct:thread	typeref:struct:thread::supplemental_page_table
+spt_elem	include/vm/vm.h	/^    struct list_elem spt_elem;$/;"	m	struct:page	typeref:struct:page::list_elem
 spt_find_page	vm/vm.c	/^spt_find_page (struct supplemental_page_table *spt UNUSED, void *va UNUSED) {$/;"	f
 spt_insert_page	vm/vm.c	/^spt_insert_page (struct supplemental_page_table *spt UNUSED,$/;"	f
+spt_list	include/vm/vm.h	/^    struct list spt_list;$/;"	m	struct:supplemental_page_table	typeref:struct:supplemental_page_table::list
 spt_remove_page	vm/vm.c	/^spt_remove_page (struct supplemental_page_table *spt, struct page *page) {$/;"	f
 ss	include/threads/interrupt.h	/^	uint16_t ss;$/;"	m	struct:intr_frame
 ss	threads/interrupt.c	/^	unsigned ss : 16;         \/\/ segment selector$/;"	m	struct:gate	file:
@@ -1741,9 +1751,9 @@ swap_byte	lib/random.c	/^swap_byte (uint8_t *a, uint8_t *b) {$/;"	f	file:
 swap_byte	tests/arc4.c	/^swap_byte (uint8_t *a, uint8_t *b)$/;"	f	file:
 swap_disk	vm/anon.c	/^static struct disk *swap_disk;$/;"	v	typeref:struct:disk	file:
 swap_in	include/vm/vm.h	/^	bool (*swap_in) (struct page *, void *);$/;"	m	struct:page_operations
-swap_in	include/vm/vm.h	79;"	d
+swap_in	include/vm/vm.h	83;"	d
 swap_out	include/vm/vm.h	/^	bool (*swap_out) (struct page *);$/;"	m	struct:page_operations
-swap_out	include/vm/vm.h	80;"	d
+swap_out	include/vm/vm.h	84;"	d
 symlink	lib/user/syscall.c	/^symlink (const char* target, const char* linkpath) {$/;"	f
 syscall	lib/user/syscall.c	/^static __inline int64_t syscall (uint64_t num_, uint64_t a1_, uint64_t a2_,$/;"	f	file:
 syscall0	lib/user/syscall.c	34;"	d	file:
@@ -2019,6 +2029,7 @@ turn_off_least_1bit	lib/kernel/hash.c	/^turn_off_least_1bit (size_t x) {$/;"	f	f
 txq	devices/serial.c	/^static struct intq txq;$/;"	v	typeref:struct:intq	file:
 type	include/vm/uninit.h	/^	enum vm_type type;$/;"	m	struct:uninit_page	typeref:enum:uninit_page::vm_type
 type	include/vm/vm.h	/^	enum vm_type type;$/;"	m	struct:page_operations	typeref:enum:page_operations::vm_type
+type	include/vm/vm.h	/^    enum vm_type type;$/;"	m	struct:page	typeref:enum:page::vm_type
 type	lib/stdio.c	/^	} type;$/;"	m	struct:printf_conversion	typeref:enum:printf_conversion::__anon5	file:
 type	threads/interrupt.c	/^	unsigned type : 4;        \/\/ type(STS_{TG,IG32,TG32})$/;"	m	struct:gate	file:
 type	threads/palloc.c	/^	uint32_t type;$/;"	m	struct:e820_entry	file:
@@ -2073,7 +2084,7 @@ vga_putc	devices/vga.c	/^vga_putc (int c) {$/;"	f
 vhprintf	lib/user/console.c	/^vhprintf (int handle, const char *format, va_list args) {$/;"	f
 vhprintf_aux	lib/user/console.c	/^struct vhprintf_aux {$/;"	s	file:
 vm_SRC	vm/targets.mk	/^vm_SRC = vm\/vm.c          # Main api proxy$/;"	m
-vm_alloc_page	include/vm/vm.h	104;"	d
+vm_alloc_page	include/vm/vm.h	109;"	d
 vm_alloc_page_with_initializer	vm/vm.c	/^vm_alloc_page_with_initializer (enum vm_type type, void *upage, bool writable,$/;"	f
 vm_anon_init	vm/anon.c	/^vm_anon_init (void) {$/;"	f
 vm_claim_page	vm/vm.c	/^vm_claim_page (void *va UNUSED) {$/;"	f
@@ -2111,8 +2122,9 @@ waiters	include/threads/synch.h	/^	struct list waiters;        \/* List of waiti
 wake_time	tests/threads/alarm-priority.c	/^static int64_t wake_time;$/;"	v	file:
 width	lib/stdio.c	/^	int width;$/;"	m	struct:printf_conversion	file:
 wrap_open	tests/filesys/extended/dir-rm-cwd.c	/^wrap_open (const char *name) $/;"	f	file:
+writable	include/vm/vm.h	/^    bool writable;$/;"	m	struct:page
 write	lib/user/syscall.c	/^write (int fd, const void *buffer, unsigned size) {$/;"	f
-write_cnt	devices/disk.c	/^	long long write_cnt;        \/* Number of sectors written. *\/$/;"	m	struct:disk	file:
+write_cnt	include/devices/disk.h	/^	long long write_cnt;        \/* Number of sectors written. *\/$/;"	m	struct:disk
 write_cnt	lib/kernel/console.c	/^static int64_t write_cnt;$/;"	v	file:
 write_header	tests/filesys/extended/tar.c	/^write_header (const char *file_name,$/;"	f	file:
 write_ier	devices/serial.c	/^write_ier (void) {$/;"	f	file:

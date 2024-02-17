@@ -3,6 +3,12 @@
 
 #include "threads/thread.h"
 
+struct lazy_load_aux{
+    int ofs;
+    int page_read_bytes;
+    int page_zero_bytes;
+    struct file* file;
+};
 tid_t process_create_initd (const char *file_name);
 tid_t process_fork (const char *name, struct intr_frame *if_);
 void put_args_into_stack(int argc, char **argv, void **rsp,struct intr_frame *if_ );

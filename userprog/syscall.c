@@ -155,6 +155,7 @@ _wait (pid_t pid){
     return process_wait(pid);
 
 }
+//write();
 
 bool
 _create (const char *file, unsigned initial_size){ 

@@ -232,6 +232,7 @@ thread_create (const char *name, int priority,
     // Add this into child list 
     struct thread *curr = thread_current();
     list_push_front(&curr->child_list, &t->child_elem);
+    // Project 3
 	/* Call the kernel_thread if it scheduled.
 	 * Note) rdi is 1st argument, and rsi is 2nd argument. */
 	t->tf.rip = (uintptr_t) kernel_thread;
@@ -305,6 +306,7 @@ struct thread *
 thread_current (void) {
 	struct thread *t = running_thread ();
 
+    //printf(" thread name = %s / ",t->name);
 	/* Make sure T is really a thread.
 	   If either of these assertions fire, then your thread may
 	   have overflowed its stack.  Each thread has less than 4 kB
