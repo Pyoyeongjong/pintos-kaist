@@ -14,6 +14,8 @@ test_main (void)
     msg ("Parent: child exit status is %d", status);
   } else {
     msg ("child run");
+    //msg (" hello ");
+    //msg (" oh my god ");
     exit(81);
   }
 }

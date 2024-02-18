@@ -33,8 +33,19 @@ typedef int pid_t;
 void
 user_memory_access(void* vaddr){
     struct thread *curr = thread_current(); 
-    if(vaddr == NULL || is_kernel_vaddr((uint64_t)vaddr) || pml4_get_page(curr->pml4, vaddr)==NULL)
+    /* Project 2
+    printf(" hi user_memory_access, vaddr=%x ",vaddr);
+    if(vaddr == NULL || is_kernel_vaddr((uint64_t)vaddr) || pml4_get_page(curr->pml4, vaddr)==NULL){
+        printf(" err2, vaddr=%x ",vaddr);
         _exit(-1);
+    }
+    */
+    // Project 3
+    if(vaddr == NULL || is_kernel_vaddr((uint64_t)vaddr) || spt_find_page(&curr->spt, vaddr)==NULL){
+    //    printf(" err3, vaddr=%x ",vaddr);
+        _exit(-1);
+    }
+    //
     return;
 }
 

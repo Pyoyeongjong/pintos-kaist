@@ -48,7 +48,6 @@ struct page {
 	/* Your implementation */
     struct list_elem spt_elem;
     bool writable;
-    enum vm_type type;
 
 	/* Per-type data are binded into the union.
 	 * Each function automatically detects the current union */

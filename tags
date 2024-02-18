@@ -808,7 +808,7 @@ desc_cnt	threads/malloc.c	/^static size_t desc_cnt;         \/* Number of descri
 desc_ptr	include/threads/mmu.h	/^struct desc_ptr {$/;"	s
 descs	threads/malloc.c	/^static struct desc descs[10];   \/* Descriptors. *\/$/;"	v	typeref:struct:desc	file:
 destroy	include/vm/vm.h	/^	void (*destroy) (struct page *);$/;"	m	struct:page_operations
-destroy	include/vm/vm.h	85;"	d
+destroy	include/vm/vm.h	84;"	d
 destruction_req	threads/thread.c	/^static struct list destruction_req;$/;"	v	typeref:struct:list	file:
 dev_no	include/devices/disk.h	/^	int dev_no;                 \/* Device 0 or 1 for master or slave. *\/$/;"	m	struct:disk
 devices	devices/disk.c	/^	struct disk devices[2];     \/* The devices on this channel. *\/$/;"	m	struct:channel	typeref:struct:channel::disk	file:
@@ -929,6 +929,7 @@ fb	devices/vga.c	/^static uint8_t (*fb)[COL_CNT][2];$/;"	v	file:
 fdTable	include/threads/thread.h	/^    struct file **fdTable;$/;"	m	struct:thread	typeref:struct:thread::file
 file	include/filesys/file.h	/^struct file {$/;"	s
 file	include/userprog/process.h	/^    struct file* file;$/;"	m	struct:lazy_load_aux	typeref:struct:lazy_load_aux::file
+file	include/vm/file.h	/^    struct file* file;$/;"	m	struct:file_page	typeref:struct:file_page::file
 file	include/vm/vm.h	/^		struct file_page file;$/;"	m	union:page::__anon2	typeref:struct:page::__anon2::file_page
 file_allow_write	filesys/file.c	/^file_allow_write (struct file *file) {$/;"	f
 file_backed_destroy	vm/file.c	/^file_backed_destroy (struct page *page) {$/;"	f	file:
@@ -1223,7 +1224,7 @@ l_thread_func	tests/threads/priority-donate-sema.c	/^static thread_func l_thread
 last_clst	filesys/fat.c	/^	cluster_t last_clst;$/;"	m	struct:fat_fs	file:
 last_mask	lib/kernel/bitmap.c	/^last_mask (const struct bitmap *b) {$/;"	f	file:
 lazy_load_aux	include/userprog/process.h	/^struct lazy_load_aux{$/;"	s
-lazy_load_segment	userprog/process.c	/^lazy_load_segment (struct page *page, void *aux) {$/;"	f	file:
+lazy_load_segment	userprog/process.c	/^lazy_load_segment (struct page *page, void *aux) {$/;"	f
 lcr3	include/intrinsic.h	/^static __inline void lcr3(uint64_t val) {$/;"	f
 left_alt	devices/kbd.c	/^static bool left_alt, right_alt;        \/* Left and right Alt keys. *\/$/;"	v	file:
 left_ctrl	devices/kbd.c	/^static bool left_ctrl, right_ctrl;      \/* Left and right Ctl keys. *\/$/;"	v	file:
@@ -1396,6 +1397,7 @@ off_t	include/filesys/off_t.h	/^typedef int32_t off_t;$/;"	t
 off_t	include/lib/user/syscall.h	/^typedef int off_t;$/;"	t
 offsetof	include/lib/stddef.h	5;"	d
 ofs	include/userprog/process.h	/^    int ofs;$/;"	m	struct:lazy_load_aux
+ofs	include/vm/file.h	/^    int ofs;$/;"	m	struct:file_page
 op	tests/threads/priority-fifo.c	/^    int **op;                   \/* Output buffer position. *\/$/;"	m	struct:simple_thread_data	file:
 open	lib/user/syscall.c	/^open (const char *file) {$/;"	f
 open_cnt	filesys/inode.c	/^	int open_cnt;                       \/* Number of openers. *\/$/;"	m	struct:inode	file:
@@ -1444,7 +1446,9 @@ page_get_type	vm/vm.c	/^page_get_type (struct page *page) {$/;"	f
 page_initializer	include/vm/uninit.h	/^	bool (*page_initializer) (struct page *, enum vm_type, void *kva);$/;"	m	struct:uninit_page
 page_operations	include/vm/vm.h	/^struct page_operations {$/;"	s
 page_read_bytes	include/userprog/process.h	/^    int page_read_bytes;$/;"	m	struct:lazy_load_aux
+page_read_bytes	include/vm/file.h	/^    int page_read_bytes;$/;"	m	struct:file_page
 page_zero_bytes	include/userprog/process.h	/^    int page_zero_bytes;$/;"	m	struct:lazy_load_aux
+page_zero_bytes	include/vm/file.h	/^    int page_zero_bytes;$/;"	m	struct:file_page
 pagecache_init	filesys/page_cache.c	/^pagecache_init (void) {$/;"	f
 paging_init	threads/init.c	/^paging_init (uint64_t mem_end) {$/;"	f	file:
 palloc_flags	include/threads/palloc.h	/^enum palloc_flags {$/;"	g
@@ -1751,9 +1755,9 @@ swap_byte	lib/random.c	/^swap_byte (uint8_t *a, uint8_t *b) {$/;"	f	file:
 swap_byte	tests/arc4.c	/^swap_byte (uint8_t *a, uint8_t *b)$/;"	f	file:
 swap_disk	vm/anon.c	/^static struct disk *swap_disk;$/;"	v	typeref:struct:disk	file:
 swap_in	include/vm/vm.h	/^	bool (*swap_in) (struct page *, void *);$/;"	m	struct:page_operations
-swap_in	include/vm/vm.h	83;"	d
+swap_in	include/vm/vm.h	82;"	d
 swap_out	include/vm/vm.h	/^	bool (*swap_out) (struct page *);$/;"	m	struct:page_operations
-swap_out	include/vm/vm.h	84;"	d
+swap_out	include/vm/vm.h	83;"	d
 symlink	lib/user/syscall.c	/^symlink (const char* target, const char* linkpath) {$/;"	f
 syscall	lib/user/syscall.c	/^static __inline int64_t syscall (uint64_t num_, uint64_t a1_, uint64_t a2_,$/;"	f	file:
 syscall0	lib/user/syscall.c	34;"	d	file:
@@ -2029,7 +2033,6 @@ turn_off_least_1bit	lib/kernel/hash.c	/^turn_off_least_1bit (size_t x) {$/;"	f	f
 txq	devices/serial.c	/^static struct intq txq;$/;"	v	typeref:struct:intq	file:
 type	include/vm/uninit.h	/^	enum vm_type type;$/;"	m	struct:uninit_page	typeref:enum:uninit_page::vm_type
 type	include/vm/vm.h	/^	enum vm_type type;$/;"	m	struct:page_operations	typeref:enum:page_operations::vm_type
-type	include/vm/vm.h	/^    enum vm_type type;$/;"	m	struct:page	typeref:enum:page::vm_type
 type	lib/stdio.c	/^	} type;$/;"	m	struct:printf_conversion	typeref:enum:printf_conversion::__anon5	file:
 type	threads/interrupt.c	/^	unsigned type : 4;        \/\/ type(STS_{TG,IG32,TG32})$/;"	m	struct:gate	file:
 type	threads/palloc.c	/^	uint32_t type;$/;"	m	struct:e820_entry	file:
@@ -2084,7 +2087,7 @@ vga_putc	devices/vga.c	/^vga_putc (int c) {$/;"	f
 vhprintf	lib/user/console.c	/^vhprintf (int handle, const char *format, va_list args) {$/;"	f
 vhprintf_aux	lib/user/console.c	/^struct vhprintf_aux {$/;"	s	file:
 vm_SRC	vm/targets.mk	/^vm_SRC = vm\/vm.c          # Main api proxy$/;"	m
-vm_alloc_page	include/vm/vm.h	109;"	d
+vm_alloc_page	include/vm/vm.h	108;"	d
 vm_alloc_page_with_initializer	vm/vm.c	/^vm_alloc_page_with_initializer (enum vm_type type, void *upage, bool writable,$/;"	f
 vm_anon_init	vm/anon.c	/^vm_anon_init (void) {$/;"	f
 vm_claim_page	vm/vm.c	/^vm_claim_page (void *va UNUSED) {$/;"	f
