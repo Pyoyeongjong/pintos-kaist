@@ -104,6 +104,8 @@ spt_find_page (struct supplemental_page_table *spt UNUSED, void *va UNUSED) {
         }
     }
     //printf(" there is no page that we want to find/// ");
+    //if( page == NULL)
+    //    printf(" page is NULL ");
 
 	return NULL;
 }
@@ -183,6 +185,18 @@ vm_get_frame (void) {
 /* Growing the stack. */
 static void
 vm_stack_growth (void *addr UNUSED) {
+    struct supplemental_page_tabpe *spt = &thread_current()->spt;
+    void  *tmp = addr;
+    while(tmp <= USER_STACK){
+        if(spt_find_page(spt, tmp) != NULL){
+            //printf(" sgreturn/ ");
+            return;
+        }
+        vm_alloc_page(VM_ANON, pg_round_down(tmp), true);
+        vm_claim_page(pg_round_down(tmp));
+        //printf(" claim ok ");
+        tmp = tmp + PGSIZE;
+    }
 }
 
 /* Handle the fault on write_protected page */
@@ -194,18 +208,38 @@ vm_handle_wp (struct page *page UNUSED) {
 bool
 vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 		bool user UNUSED, bool write UNUSED, bool not_present UNUSED) {
+    //printf(" LOG try_handle_fault ");
+    
+    //printf("f.rsp = %x ",f->rsp);
+    printf(" addr=%x \n", addr);
 	struct supplemental_page_table *spt UNUSED = &thread_current ()->spt;
 	struct page *page = NULL;
 	/* TODO: Validate the fault */
 	/* TODO: Your code goes here */
-    page = spt_find_page(spt, pg_round_down(addr));
-    if(page == NULL)
-        return false;
-    if(page->frame != NULL)
-        return false;
-
-    //printf(" page_fault handing success ");
-	return vm_do_claim_page (page);
+    page = spt_find_page(spt, addr);
+    if(page == NULL){
+        //stack growth
+        //printf(" stack growth, addr=%x,f.rsp=%x \n",addr,f->rsp);
+        if(addr <= USER_STACK && addr > USER_STACK - (1<<20) && 
+                pg_round_down(addr) <= pg_round_up(f->rsp) && addr > (f->rsp)-10){
+            //printf(" LOG stack growth\n ");
+            vm_stack_growth(addr);
+            return true;
+        }
+        //printf(" here ");
+        _exit(-1);
+    }else{ 
+        // write on code_part 
+        //printf(" write=%d, pagewritable=%d ",write,page->writable);
+        if( write && page->writable == false){
+            _exit(-1);
+        }
+        //printf(" lazy loading ");
+        if(page->frame == NULL)
+            return vm_do_claim_page(page);
+    }
+    //printf(" false hangdong ");
+    return false;
 }
 
 /* Free the page.

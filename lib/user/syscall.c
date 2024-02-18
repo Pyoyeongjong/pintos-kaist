@@ -99,7 +99,7 @@ bool
 create (const char *file, unsigned initial_size) {
 	return syscall2 (SYS_CREATE, file, initial_size);
 }
-
+//_create
 bool
 remove (const char *file) {
 	return syscall1 (SYS_REMOVE, file);
@@ -119,7 +119,7 @@ int
 read (int fd, void *buffer, unsigned size) {
 	return syscall3 (SYS_READ, fd, buffer, size);
 }
-
+//_read
 int
 write (int fd, const void *buffer, unsigned size) {
 	return syscall3 (SYS_WRITE, fd, buffer, size);

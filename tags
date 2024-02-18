@@ -212,9 +212,9 @@ MCR_OUT2	devices/serial.c	45;"	d	file:
 MCR_REG	devices/serial.c	33;"	d	file:
 MINUS	lib/stdio.c	/^		MINUS = 1 << 0,         \/* '-' *\/$/;"	e	enum:printf_conversion::__anon4	file:
 MIN_ELEMS_PER_BUCKET	lib/kernel/hash.c	313;"	d	file:
-MSR_LSTAR	userprog/syscall.c	30;"	d	file:
-MSR_STAR	userprog/syscall.c	29;"	d	file:
-MSR_SYSCALL_MASK	userprog/syscall.c	31;"	d	file:
+MSR_LSTAR	userprog/syscall.c	31;"	d	file:
+MSR_STAR	userprog/syscall.c	30;"	d	file:
+MSR_SYSCALL_MASK	userprog/syscall.c	32;"	d	file:
 MS_REG	devices/serial.c	27;"	d	file:
 MULTIBOOT_FLAG	include/threads/loader.h	16;"	d
 MULTIBOOT_INFO	include/threads/loader.h	15;"	d

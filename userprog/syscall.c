@@ -14,6 +14,7 @@
 #include "filesys/file.h"
 #include "threads/thread.h"
 #include "intrinsic.h"
+#include "vm/vm.h"
 void syscall_entry (void);
 void syscall_handler (struct intr_frame *);
 typedef int pid_t;
@@ -41,8 +42,9 @@ user_memory_access(void* vaddr){
     }
     */
     // Project 3
-    if(vaddr == NULL || is_kernel_vaddr((uint64_t)vaddr) || spt_find_page(&curr->spt, vaddr)==NULL){
+    if(vaddr == NULL || is_kernel_vaddr((uint64_t)vaddr)){
     //    printf(" err3, vaddr=%x ",vaddr);
+        //printf(" here? ");
         _exit(-1);
     }
     //
@@ -211,11 +213,27 @@ _filesize (int fd){
 
 int 
 _read(int fd, void *buffer, unsigned size){
+    //printf(" LOG B/ ");
 
     struct thread *curr = thread_current();
     user_memory_access(buffer);
     user_memory_access(buffer + size-1);
+    
+    // TODO: when writing in unpaged stack.. what should i do?
 
+    //check buffer is writable - Project 3 Stack Growth
+    struct supplemental_page_table *spt = &thread_current()->spt;
+    struct page* ps = spt_find_page(spt, buffer);
+    struct page* pe = spt_find_page(spt, buffer+size-1);
+    if(spt_find_page(spt, buffer)->writable == false || 
+            spt_find_page(spt, buffer + size-1)->writable == false){
+        //printf(" LOG A/ ");
+        _exit(-1);
+    }
+    //printf(" LOG C/ ");
+    //printf(" buffer=%x ",buffer);
+
+     
     unsigned int read_size;
     if(fd < 0 || fd >=FD_LIMIT)
         return -1;
@@ -246,6 +264,7 @@ _read(int fd, void *buffer, unsigned size){
 int
 _write(int fd, const void *buffer, unsigned size){
 
+    //printf(" @@write@@ ");
     user_memory_access(buffer);
     user_memory_access(buffer + size-1);
     if(fd < 0 || fd >=FD_LIMIT)

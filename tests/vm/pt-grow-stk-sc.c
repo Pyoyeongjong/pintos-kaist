@@ -16,6 +16,7 @@ test_main (void)
   int handle;
   int slen = strlen (sample);
   char buf2[65536];
+  //printf("slen = %d ",slen);
 
   /* Write file via write(). */
   CHECK (create ("sample.txt", slen), "create \"sample.txt\"");
@@ -25,6 +26,7 @@ test_main (void)
 
   /* Read back via read(). */
   CHECK ((handle = open ("sample.txt")) > 1, "2nd open \"sample.txt\"");
+  //printf(" buf2 = %x ,buf2+32768=%x",buf2,buf2+32768);
   CHECK (read (handle, buf2 + 32768, slen) == slen, "read \"sample.txt\"");
 
   CHECK (!memcmp (sample, buf2 + 32768, slen), "compare written data against read data");
