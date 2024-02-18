@@ -5,6 +5,7 @@
 #include "threads/interrupt.h"
 #include "threads/thread.h"
 #include "threads/loader.h"
+#include "threads/vaddr.h"
 #include "lib/string.h"
 #include "threads/init.h"
 #include "threads/palloc.h"
@@ -118,10 +119,40 @@ syscall_handler (struct intr_frame *f UNUSED) {
         case SYS_DUP2:
             f->R.rax = _dup2(f->R.rdi, f->R.rsi);
             break;
+        case SYS_MMAP:
+            f->R.rax = _mmap(f->R.rdi, f->R.rsi, f->R.rdx, f->R.r10, f->R.r8); 
+            break;
+        case SYS_MUNMAP:
+            _munmap(f->R.rdi);
+            break;
         default:
             _exit(-1);
             break;
     }
+}
+
+void*
+_mmap(void *addr, size_t length, int writable, int fd, off_t offset){
+
+
+    //printf(" hi_mmap ");
+    if(addr == NULL || addr == 0 || ((int)addr % PGSIZE) != 0 || length == 0)
+        return NULL;
+
+    struct file* file = thread_fd_find(fd);
+    if(file == NULL)
+        return NULL;
+    
+    return do_mmap(addr, length, writable, file, offset);
+}
+
+void 
+_munmap(void *addr){
+        
+    //file_write_at(file, buffer, size, file_ofs);
+    if(addr == NULL || addr == 0)
+        return;
+    do_munmap(pg_round_down(addr));
 }
 
 void

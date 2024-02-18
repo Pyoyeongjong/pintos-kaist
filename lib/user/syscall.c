@@ -139,6 +139,7 @@ void
 close (int fd) {
 	syscall1 (SYS_CLOSE, fd);
 }
+//_close
 
 int
 dup2 (int oldfd, int newfd){

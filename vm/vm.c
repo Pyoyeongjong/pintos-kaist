@@ -208,18 +208,14 @@ vm_handle_wp (struct page *page UNUSED) {
 bool
 vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 		bool user UNUSED, bool write UNUSED, bool not_present UNUSED) {
-    //printf(" LOG try_handle_fault ");
-    
-    //printf("f.rsp = %x ",f->rsp);
-    printf(" addr=%x \n", addr);
 	struct supplemental_page_table *spt UNUSED = &thread_current ()->spt;
 	struct page *page = NULL;
 	/* TODO: Validate the fault */
 	/* TODO: Your code goes here */
     page = spt_find_page(spt, addr);
     if(page == NULL){
+        //printf(" null addr = %x ",addr);
         //stack growth
-        //printf(" stack growth, addr=%x,f.rsp=%x \n",addr,f->rsp);
         if(addr <= USER_STACK && addr > USER_STACK - (1<<20) && 
                 pg_round_down(addr) <= pg_round_up(f->rsp) && addr > (f->rsp)-10){
             //printf(" LOG stack growth\n ");
@@ -230,7 +226,6 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
         _exit(-1);
     }else{ 
         // write on code_part 
-        //printf(" write=%d, pagewritable=%d ",write,page->writable);
         if( write && page->writable == false){
             _exit(-1);
         }

@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include "threads/interrupt.h"
 #include "filesys/file.h"
+#include "lib/stddef.h"
 #define FD_LIMIT 0x200
 //thread_create
 //process_exit
@@ -11,6 +12,8 @@
 void syscall_init (void);
 
 void user_memory_access(void*);
+void* _mmap(void *addr, size_t length, int writable, int fd, off_t offset);
+void _munmap(void *addr);
 void _halt(void);
 void _exit(int status);
 int _fork(const char *thread_name, struct intr_frame *if_);

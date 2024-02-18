@@ -723,6 +723,7 @@ lazy_load_segment (struct page *page, void *aux) {
 	/* TODO: Load the segment from the file */
 	/* TODO: This called when the first page fault occurs on address VA. */
 	/* TODO: VA is available when calling this function. */
+    //printf("lazy_load_segment");
     struct lazy_load_aux* laux = (struct lazy_load_aux*)aux;
     int ofs = laux->ofs;
     int page_read_bytes = laux->page_read_bytes;
@@ -743,6 +744,8 @@ lazy_load_segment (struct page *page, void *aux) {
         return false;
     }
     memset (kpage + page_read_bytes, 0, page_zero_bytes);
+
+    //file_close(file);
 
     return true;
 }
@@ -770,6 +773,7 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
     
     int page_count = 0;
 
+
 	while (read_bytes > 0 || zero_bytes > 0) {
 		/* Do calculate how to fill this page.
 		 * We will read PAGE_READ_BYTES bytes from FILE
@@ -782,7 +786,8 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
         laux->ofs = ofs + page_count * PGSIZE;
         laux->page_read_bytes = page_read_bytes;
         laux->page_zero_bytes = page_zero_bytes;
-        laux->file = file;
+
+        laux->file = file_reopen(file); // I think file_reopen is not good..
 		void *aux = laux;
 
 		if (!vm_alloc_page_with_initializer (VM_FILE, upage,
