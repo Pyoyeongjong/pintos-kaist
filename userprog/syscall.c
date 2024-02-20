@@ -136,7 +136,7 @@ _mmap(void *addr, size_t length, int writable, int fd, off_t offset){
 
 
     //printf(" hi_mmap ");
-    if(addr == NULL || addr == 0 || ((int)addr % PGSIZE) != 0 || length == 0)
+    if(is_kernel_vaddr(addr) || addr == NULL || addr == 0 || ((int)addr % PGSIZE) != 0 || (long long)length <= 0 || ((offset % PGSIZE) != 0))
         return NULL;
 
     struct file* file = thread_fd_find(fd);

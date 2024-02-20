@@ -113,7 +113,7 @@ F	threads/fixed-point.h	1;"	d
 FAT_BOOT_SECTOR	include/filesys/fat.h	18;"	d
 FAT_MAGIC	include/filesys/fat.h	13;"	d
 FCR_REG	devices/serial.c	31;"	d	file:
-FD_LIMIT	include/userprog/syscall.h	7;"	d
+FD_LIMIT	include/userprog/syscall.h	8;"	d
 FILESYS_DIRECTORY_H	include/filesys/directory.h	2;"	d
 FILESYS_FAT_H	include/filesys/fat.h	2;"	d
 FILESYS_FILESYS_H	include/filesys/filesys.h	2;"	d
@@ -212,9 +212,9 @@ MCR_OUT2	devices/serial.c	45;"	d	file:
 MCR_REG	devices/serial.c	33;"	d	file:
 MINUS	lib/stdio.c	/^		MINUS = 1 << 0,         \/* '-' *\/$/;"	e	enum:printf_conversion::__anon4	file:
 MIN_ELEMS_PER_BUCKET	lib/kernel/hash.c	313;"	d	file:
-MSR_LSTAR	userprog/syscall.c	31;"	d	file:
-MSR_STAR	userprog/syscall.c	30;"	d	file:
-MSR_SYSCALL_MASK	userprog/syscall.c	32;"	d	file:
+MSR_LSTAR	userprog/syscall.c	32;"	d	file:
+MSR_STAR	userprog/syscall.c	31;"	d	file:
+MSR_SYSCALL_MASK	userprog/syscall.c	33;"	d	file:
 MS_REG	devices/serial.c	27;"	d	file:
 MULTIBOOT_FLAG	include/threads/loader.h	16;"	d
 MULTIBOOT_INFO	include/threads/loader.h	15;"	d
@@ -560,6 +560,8 @@ _filesize	userprog/syscall.c	/^_filesize (int fd){$/;"	f
 _fork	userprog/syscall.c	/^_fork (const char *thread_name, struct intr_frame *f){$/;"	f
 _halt	userprog/syscall.c	/^_halt(void){$/;"	f
 _longestCommonSubsequence	tests/Algorithm/Diff.pm	/^sub _longestCommonSubsequence$/;"	s
+_mmap	userprog/syscall.c	/^_mmap(void *addr, size_t length, int writable, int fd, off_t offset){$/;"	f
+_munmap	userprog/syscall.c	/^_munmap(void *addr){$/;"	f
 _open	userprog/syscall.c	/^_open (const char *file){$/;"	f
 _read	userprog/syscall.c	/^_read(int fd, void *buffer, unsigned size){$/;"	f
 _remove	userprog/syscall.c	/^_remove (const char *file){$/;"	f
@@ -808,7 +810,7 @@ desc_cnt	threads/malloc.c	/^static size_t desc_cnt;         \/* Number of descri
 desc_ptr	include/threads/mmu.h	/^struct desc_ptr {$/;"	s
 descs	threads/malloc.c	/^static struct desc descs[10];   \/* Descriptors. *\/$/;"	v	typeref:struct:desc	file:
 destroy	include/vm/vm.h	/^	void (*destroy) (struct page *);$/;"	m	struct:page_operations
-destroy	include/vm/vm.h	84;"	d
+destroy	include/vm/vm.h	85;"	d
 destruction_req	threads/thread.c	/^static struct list destruction_req;$/;"	v	typeref:struct:list	file:
 dev_no	include/devices/disk.h	/^	int dev_no;                 \/* Device 0 or 1 for master or slave. *\/$/;"	m	struct:disk
 devices	devices/disk.c	/^	struct disk devices[2];     \/* The devices on this channel. *\/$/;"	m	struct:channel	typeref:struct:channel::disk	file:
@@ -862,6 +864,7 @@ ds	include/threads/interrupt.h	/^	uint16_t ds;$/;"	m	struct:intr_frame
 dst	tests/userprog/boundary.c	/^static char dst[8192];$/;"	v	file:
 dup2	lib/user/syscall.c	/^dup2 (int oldfd, int newfd){$/;"	f
 dup2_count	include/filesys/file.h	/^    long long int dup2_count;$/;"	m	struct:file
+dup_count	include/vm/vm.h	/^    int dup_count;$/;"	m	struct:frame
 duplicate_pte	userprog/process.c	/^duplicate_pte (uint64_t *pte, void *va, void *aux) {$/;"	f	file:
 duration	tests/threads/alarm-wait.c	/^    int duration;               \/* Number of ticks to sleep. *\/$/;"	m	struct:sleep_thread	file:
 e820_entry	threads/palloc.c	/^struct e820_entry {$/;"	s	file:
@@ -1362,6 +1365,10 @@ mlfqs_expected_ticks	tests/threads/mlfqs.pm	/^sub mlfqs_expected_ticks {$/;"	s
 mlfqs_row	tests/threads/mlfqs.pm	/^sub mlfqs_row {$/;"	s
 mmap	lib/user/syscall.c	/^mmap (void *addr, size_t length, int writable, int fd, off_t offset) {$/;"	f
 mmap_base	threads/palloc.c	/^	uint32_t mmap_base;$/;"	m	struct:multiboot_info	file:
+mmap_head	include/userprog/process.h	/^    bool mmap_head;$/;"	m	struct:lazy_load_aux
+mmap_head	include/vm/file.h	/^    bool mmap_head;$/;"	m	struct:file_page
+mmap_len	include/userprog/process.h	/^    int mmap_len;$/;"	m	struct:lazy_load_aux
+mmap_len	include/vm/file.h	/^    int mmap_len;$/;"	m	struct:file_page
 mmap_len	threads/palloc.c	/^	uint32_t mmap_len;$/;"	m	struct:multiboot_info	file:
 mode	devices/serial.c	/^static enum { UNINIT, POLL, QUEUE } mode;$/;"	v	typeref:enum:__anon3	file:
 mount	lib/user/syscall.c	/^mount (const char *path, int chan_no, int dev_no) {$/;"	f
@@ -1755,9 +1762,9 @@ swap_byte	lib/random.c	/^swap_byte (uint8_t *a, uint8_t *b) {$/;"	f	file:
 swap_byte	tests/arc4.c	/^swap_byte (uint8_t *a, uint8_t *b)$/;"	f	file:
 swap_disk	vm/anon.c	/^static struct disk *swap_disk;$/;"	v	typeref:struct:disk	file:
 swap_in	include/vm/vm.h	/^	bool (*swap_in) (struct page *, void *);$/;"	m	struct:page_operations
-swap_in	include/vm/vm.h	82;"	d
+swap_in	include/vm/vm.h	83;"	d
 swap_out	include/vm/vm.h	/^	bool (*swap_out) (struct page *);$/;"	m	struct:page_operations
-swap_out	include/vm/vm.h	83;"	d
+swap_out	include/vm/vm.h	84;"	d
 symlink	lib/user/syscall.c	/^symlink (const char* target, const char* linkpath) {$/;"	f
 syscall	lib/user/syscall.c	/^static __inline int64_t syscall (uint64_t num_, uint64_t a1_, uint64_t a2_,$/;"	f	file:
 syscall0	lib/user/syscall.c	34;"	d	file:
@@ -2087,7 +2094,7 @@ vga_putc	devices/vga.c	/^vga_putc (int c) {$/;"	f
 vhprintf	lib/user/console.c	/^vhprintf (int handle, const char *format, va_list args) {$/;"	f
 vhprintf_aux	lib/user/console.c	/^struct vhprintf_aux {$/;"	s	file:
 vm_SRC	vm/targets.mk	/^vm_SRC = vm\/vm.c          # Main api proxy$/;"	m
-vm_alloc_page	include/vm/vm.h	108;"	d
+vm_alloc_page	include/vm/vm.h	109;"	d
 vm_alloc_page_with_initializer	vm/vm.c	/^vm_alloc_page_with_initializer (enum vm_type type, void *upage, bool writable,$/;"	f
 vm_anon_init	vm/anon.c	/^vm_anon_init (void) {$/;"	f
 vm_claim_page	vm/vm.c	/^vm_claim_page (void *va UNUSED) {$/;"	f

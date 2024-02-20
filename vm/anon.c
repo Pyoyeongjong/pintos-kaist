@@ -52,7 +52,19 @@ anon_swap_out (struct page *page) {
 /* Destroy the anonymous page. PAGE will be freed by the caller. */
 static void
 anon_destroy (struct page *page) {
+    uint64_t* pml4 = thread_current()->pml4;
 	struct anon_page *anon_page = &page->anon;
-    // Just return because I don't know now what info should be written in anon..
+    struct frame* frame = page->frame;
+
+    
+    frame->dup_count -= 1;
+    pml4_clear_page(pml4, page->va);
+
+    if(frame->dup_count < 0){
+        palloc_free_page(frame->kva);    
+        free(frame);
+    }
+    
+
     return;
 }

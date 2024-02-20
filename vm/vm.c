@@ -82,8 +82,8 @@ vm_alloc_page_with_initializer (enum vm_type type, void *upage, bool writable,
         if(!spt_insert_page(spt, page)){
             return false;
         }
+        return true;
 	}
-    return true;
 err:
 	return false;
 }
@@ -119,15 +119,21 @@ spt_insert_page (struct supplemental_page_table *spt UNUSED,
     struct list* spt_list = &spt->spt_list;
     //printf("insert page_va=%x// ",page->va);
     list_push_back(spt_list, &page->spt_elem);
+    
+
     succ = true;
 
 	return succ;
 }
 
+// marking frame with pte * 0x0; dealloc_frame(if frame.dup_count-> <0, delete);
 void
 spt_remove_page (struct supplemental_page_table *spt, struct page *page) {
+
     list_remove(&page->spt_elem);
 	vm_dealloc_page (page);
+
+    // TODO: Fill file_backed_destroy 24.02.20
 	return true;
 }
 
@@ -173,6 +179,7 @@ vm_get_frame (void) {
     else{
         frame = (struct frame*)malloc(sizeof(struct frame));
         frame->kva = kva;
+        frame->dup_count = 0;
     }
     list_push_back(&frame_table, &frame->elem); 
     frame->page = NULL;
@@ -313,6 +320,8 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
                 daux->page_read_bytes = saux->page_read_bytes;
                 daux->page_zero_bytes = saux->page_zero_bytes;
                 daux->file = file_reopen(saux->file); 
+                daux->mmap_head = saux->mmap_head;
+                daux->mmap_len = saux->mmap_len;
                 vm_alloc_page_with_initializer(src_page->uninit.type, src_page->va, src_page->writable
                         , lazy_load_segment, daux); 
             }else if (src_page->uninit.type == VM_ANON){
@@ -341,11 +350,9 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
             bool success = vm_claim_page(dst_page->va);
             memcpy(dst_page->frame->kva, src_page->frame->kva, PGSIZE);        
         }
-        /*
-        */
     }
-    //printf("\n@@@copy end@@@\n");
     return true;
+
 }
 
 /* Free the resource hold by the supplemental page table */
@@ -353,24 +360,18 @@ void
 supplemental_page_table_kill (struct supplemental_page_table *spt UNUSED) {
 	/* TODO: Destroy all the supplemental_page_table hold by thread and
 	 * TODO: writeback all the modified contents to the storage. */
+    // Just return because I don't know now what info should be written in anon..
     if(spt == NULL)
         return;
+
     struct list* spt_list = &spt->spt_list;
     struct list_elem* e;
-
-    for(e = list_begin(spt_list); e != list_end(spt_list); e = list_next(e)){
-        struct page* p = list_entry(e, struct page, spt_elem);
-        //printf(" p=%x va=%x",p,p->va);
-    }
-
+    //printf("curr=%s ",thread_current()->name);
     // we don't have to kill page->frame memory here because pml4_destroy do this! 
     for(e = list_begin(spt_list); e != list_end(spt_list);){
         struct page* p = list_entry(e, struct page, spt_elem);
-        //printf(" p=%x ",p),
-        //printf("ptype=%d",p->operations->type);
-        e = list_next(e);
+        e = list_next(e); 
         spt_remove_page(spt, p); 
-        //printf(" ok\n");
     }
     return;
 }

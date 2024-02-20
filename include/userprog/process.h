@@ -8,6 +8,9 @@ struct lazy_load_aux{
     int page_read_bytes;
     int page_zero_bytes;
     struct file* file;
+    //mmap
+    bool mmap_head;
+    int mmap_len;
 };
 tid_t process_create_initd (const char *file_name);
 tid_t process_fork (const char *name, struct intr_frame *if_);

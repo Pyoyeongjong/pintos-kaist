@@ -11,6 +11,8 @@ struct file_page {
     int page_read_bytes;
     int page_zero_bytes;
     struct file* file;
+    bool mmap_head;
+    int mmap_len;
 };
 
 void vm_file_init (void);

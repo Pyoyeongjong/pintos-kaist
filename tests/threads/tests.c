@@ -46,6 +46,7 @@ static const char *test_name;
 void
 run_test (const char *name) 
 {
+   // printf("2spt=%x /", &thread_current()->spt);
   const struct test *t;
 
   for (t = tests; t < tests + sizeof tests / sizeof *tests; t++)
@@ -55,6 +56,7 @@ run_test (const char *name)
         msg ("begin");
         t->function ();
         msg ("end");
+     //   printf("3spt=%x /", &thread_current()->spt);
         return;
       }
   PANIC ("no test named \"%s\"", name);

@@ -293,8 +293,6 @@ process_exit (void) {
 	 * TODO: project2/process_termination.html).
 	 * TODO: We recommend you to implement process resource cleanup here. */
     file_close(curr->running_file);
-    sema_up(&curr->wait_sema);
-    sema_down(&curr->accept_sema);
     
     for(int i=0;i<FD_LIMIT;i++){
         struct file *f = thread_fd_find(i);
@@ -304,6 +302,8 @@ process_exit (void) {
     }
     palloc_free_multiple(curr->fdTable, 3);
 	process_cleanup ();
+    sema_up(&curr->wait_sema);
+    sema_down(&curr->accept_sema);
 }
 
 /* Free the current process's resources. */
@@ -312,7 +312,7 @@ process_cleanup (void) {
 	struct thread *curr = thread_current ();
 
 #ifdef VM
-	supplemental_page_table_kill (&curr->spt);
+    supplemental_page_table_kill (&curr->spt);
 #endif
 
 	uint64_t *pml4;
@@ -786,8 +786,9 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
         laux->ofs = ofs + page_count * PGSIZE;
         laux->page_read_bytes = page_read_bytes;
         laux->page_zero_bytes = page_zero_bytes;
-
         laux->file = file_reopen(file); // I think file_reopen is not good..
+        laux->mmap_head = false;
+        laux->mmap_len = 0;
 		void *aux = laux;
 
 		if (!vm_alloc_page_with_initializer (VM_FILE, upage,

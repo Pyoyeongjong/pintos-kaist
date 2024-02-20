@@ -333,7 +333,6 @@ thread_exit (void) {
 #ifdef USERPROG
 	process_exit ();
 #endif
-
 	/* Just set our status to dying and schedule another process.
 	   We will be destroyed during the call to schedule_tail(). */
 	intr_disable ();
@@ -567,6 +566,10 @@ init_thread (struct thread *t, const char *name, int priority) {
     sema_init(&t->wait_sema, 0);
     sema_init(&t->accept_sema, 0);
     list_init(&t->child_list);
+    // Project 3
+#ifdef VM
+    supplemental_page_table_init (&t->spt);
+#endif
 }
 
 /* Chooses and returns the next thread to be scheduled.  Should
