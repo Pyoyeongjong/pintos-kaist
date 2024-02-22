@@ -292,7 +292,6 @@ process_exit (void) {
 	 * TODO: Implement process termination message (see
 	 * TODO: project2/process_termination.html).
 	 * TODO: We recommend you to implement process resource cleanup here. */
-    file_close(curr->running_file);
     
     for(int i=0;i<FD_LIMIT;i++){
         struct file *f = thread_fd_find(i);
@@ -301,6 +300,9 @@ process_exit (void) {
         file_close(f);
     }
     palloc_free_multiple(curr->fdTable, 3);
+    if(curr->running_file != NULL){
+       file_close(curr->running_file);
+    }
 	process_cleanup ();
     sema_up(&curr->wait_sema);
     sema_down(&curr->accept_sema);
@@ -745,7 +747,7 @@ lazy_load_segment (struct page *page, void *aux) {
     }
     memset (kpage + page_read_bytes, 0, page_zero_bytes);
 
-    //file_close(file);
+    file_close(file);
 
     return true;
 }
@@ -791,7 +793,7 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
         laux->mmap_len = 0;
 		void *aux = laux;
 
-		if (!vm_alloc_page_with_initializer (VM_FILE, upage,
+		if (!vm_alloc_page_with_initializer (VM_ANON, upage,
 					writable, lazy_load_segment, aux))
 			return false;
 

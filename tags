@@ -99,9 +99,9 @@ E820_MAP4	include/threads/loader.h	21;"	d
 EFER_LME	threads/start.S	/^#define EFER_LME (1 << 8)$/;"	d
 EFER_MSR	threads/start.S	/^#define EFER_MSR 0xC0000080$/;"	d
 EFER_SCE	threads/start.S	/^#define EFER_SCE (1 << 0)$/;"	d
-EI_NIDENT	userprog/process.c	351;"	d	file:
+EI_NIDENT	userprog/process.c	353;"	d	file:
 ELEM_BITS	lib/kernel/bitmap.c	22;"	d	file:
-ELF	userprog/process.c	397;"	d	file:
+ELF	userprog/process.c	399;"	d	file:
 ELF64_PHDR	userprog/process.c	/^struct ELF64_PHDR {$/;"	s	file:
 ELF64_hdr	userprog/process.c	/^struct ELF64_hdr {$/;"	s	file:
 EOChain	include/filesys/fat.h	14;"	d
@@ -261,11 +261,11 @@ PDPESHIFT	include/threads/pte.h	21;"	d
 PDX	include/threads/pte.h	27;"	d
 PDXSHIFT	include/threads/pte.h	22;"	d
 PF_P	include/userprog/exception.h	5;"	d
-PF_R	userprog/process.c	364;"	d	file:
+PF_R	userprog/process.c	366;"	d	file:
 PF_U	include/userprog/exception.h	7;"	d
 PF_W	include/userprog/exception.h	6;"	d
-PF_W	userprog/process.c	363;"	d	file:
-PF_X	userprog/process.c	362;"	d	file:
+PF_W	userprog/process.c	365;"	d	file:
+PF_X	userprog/process.c	364;"	d	file:
 PGBITS	include/threads/vaddr.h	19;"	d
 PGMASK	include/threads/vaddr.h	21;"	d
 PGSHIFT	include/threads/vaddr.h	18;"	d
@@ -334,15 +334,15 @@ PTRDIFF_MAX	include/lib/stdint.h	47;"	d
 PTRDIFF_MIN	include/lib/stdint.h	46;"	d
 PTX	include/threads/pte.h	28;"	d
 PTXSHIFT	include/threads/pte.h	23;"	d
-PT_DYNAMIC	userprog/process.c	355;"	d	file:
-PT_INTERP	userprog/process.c	356;"	d	file:
-PT_LOAD	userprog/process.c	354;"	d	file:
-PT_NOTE	userprog/process.c	357;"	d	file:
-PT_NULL	userprog/process.c	353;"	d	file:
-PT_PHDR	userprog/process.c	359;"	d	file:
-PT_SHLIB	userprog/process.c	358;"	d	file:
-PT_STACK	userprog/process.c	360;"	d	file:
-Phdr	userprog/process.c	398;"	d	file:
+PT_DYNAMIC	userprog/process.c	357;"	d	file:
+PT_INTERP	userprog/process.c	358;"	d	file:
+PT_LOAD	userprog/process.c	356;"	d	file:
+PT_NOTE	userprog/process.c	359;"	d	file:
+PT_NULL	userprog/process.c	355;"	d	file:
+PT_PHDR	userprog/process.c	361;"	d	file:
+PT_SHLIB	userprog/process.c	360;"	d	file:
+PT_STACK	userprog/process.c	362;"	d	file:
+Phdr	userprog/process.c	400;"	d	file:
 Prev	tests/Algorithm/Diff.pm	/^sub Prev {$/;"	s
 QUEUE	devices/serial.c	/^static enum { UNINIT, POLL, QUEUE } mode;$/;"	e	enum:__anon3	file:
 R	include/threads/interrupt.h	/^	struct gp_registers R;$/;"	m	struct:intr_frame	typeref:struct:intr_frame::gp_registers
@@ -361,6 +361,7 @@ Reset	tests/Algorithm/Diff.pm	/^sub Reset$/;"	s
 SCHAR_MAX	include/lib/limits.h	6;"	d
 SCHAR_MIN	include/lib/limits.h	7;"	d
 SECTORS_PER_CLUSTER	include/filesys/fat.h	17;"	d
+SECTORS_PER_PAGE	vm/anon.c	/^const size_t SECTORS_PER_PAGE = PGSIZE \/ DISK_SECTOR_SIZE;$/;"	v
 SEG64	userprog/gdt.c	59;"	d	file:
 SEL_CNT	include/threads/loader.h	41;"	d
 SEL_KCSEG	include/threads/loader.h	36;"	d
@@ -831,6 +832,7 @@ dir_remove	filesys/directory.c	/^dir_remove (struct dir *dir, const char *name) 
 dir_reopen	filesys/directory.c	/^dir_reopen (struct dir *dir) {$/;"	f
 disk	include/devices/disk.h	/^struct disk {$/;"	s
 disk_get	devices/disk.c	/^disk_get (int chan_no, int dev_no) {$/;"	f
+disk_index	include/vm/anon.h	/^    int disk_index;$/;"	m	struct:anon_page
 disk_init	devices/disk.c	/^disk_init (void) {$/;"	f
 disk_print_stats	devices/disk.c	/^disk_print_stats (void) {$/;"	f
 disk_read	devices/disk.c	/^disk_read (struct disk *d, disk_sector_t sec_no, void *buffer) {$/;"	f
@@ -1765,6 +1767,7 @@ swap_in	include/vm/vm.h	/^	bool (*swap_in) (struct page *, void *);$/;"	m	struct
 swap_in	include/vm/vm.h	83;"	d
 swap_out	include/vm/vm.h	/^	bool (*swap_out) (struct page *);$/;"	m	struct:page_operations
 swap_out	include/vm/vm.h	84;"	d
+swap_table	vm/anon.c	/^struct bitmap *swap_table;$/;"	v	typeref:struct:bitmap
 symlink	lib/user/syscall.c	/^symlink (const char* target, const char* linkpath) {$/;"	f
 syscall	lib/user/syscall.c	/^static __inline int64_t syscall (uint64_t num_, uint64_t a1_, uint64_t a2_,$/;"	f	file:
 syscall0	lib/user/syscall.c	34;"	d	file:

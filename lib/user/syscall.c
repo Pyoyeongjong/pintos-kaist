@@ -155,6 +155,7 @@ void
 munmap (void *addr) {
 	syscall1 (SYS_MUNMAP, addr);
 }
+//_munmap
 
 bool
 chdir (const char *dir) {

@@ -45,12 +45,32 @@ file_backed_initializer (struct page *page, enum vm_type type, void *kva) {
 static bool
 file_backed_swap_in (struct page *page, void *kva) {
 	struct file_page *file_page UNUSED = &page->file;
+
+    file_seek(file_page->file, file_page->ofs);
+
+    if(file_read(file_page->file, page->frame->kva, file_page->page_read_bytes)
+            != (int) file_page->page_read_bytes)
+        return false;
+
+    memset(page->frame->kva + file_page->page_read_bytes, 0, file_page->page_zero_bytes);
+    return true;
 }
 
 /* Swap out the page by writeback contents to the file. */
 static bool
 file_backed_swap_out (struct page *page) {
 	struct file_page *file_page UNUSED = &page->file;
+    uint64_t* pml4 = thread_current()->pml4;
+
+    if(pml4_is_dirty(pml4, page->va)){
+        printf(" it is dirty");
+        file_write_at(file_page->file, page->frame->kva, PGSIZE, file_page->ofs);
+        pml4_set_dirty(pml4, page->va, 0);
+    }
+    page->frame->page = NULL;
+    page->frame = NULL;
+    pml4_clear_page(pml4, page->va);
+    
 }
 
 /* Destory the file backed page. PAGE will be freed by the caller. */
@@ -147,7 +167,6 @@ do_munmap (void *addr) {
     
     //printf(" mmap_len = %x ",len);
 
-    //spt_remove_page && marking frame with pte * 0x0; dealloc_frame(if frame.dup_count-> <0, delete);
     for(int i = 0; i * PGSIZE < len; i++){
         struct page* page = spt_find_page(spt, addr + (i * PGSIZE));
         if(page == NULL){
@@ -159,7 +178,6 @@ do_munmap (void *addr) {
             file_write_at(page->file.file, page->frame->kva, PGSIZE,page->file.ofs);
             pml4_set_dirty(thread_current()->pml4, page->va, 0);
         } 
-        //printf(" removing pageva=%x ",page->va);
         spt_remove_page(spt, page);
     }
     return;

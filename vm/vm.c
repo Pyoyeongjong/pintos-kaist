@@ -126,10 +126,12 @@ spt_insert_page (struct supplemental_page_table *spt UNUSED,
 	return succ;
 }
 
-// marking frame with pte * 0x0; dealloc_frame(if frame.dup_count-> <0, delete);
 void
 spt_remove_page (struct supplemental_page_table *spt, struct page *page) {
 
+    if(page->frame != NULL){
+        page->frame->page = NULL;
+    }
     list_remove(&page->spt_elem);
 	vm_dealloc_page (page);
 
@@ -146,6 +148,7 @@ vm_get_victim (void) {
     // FIFO..
     if(!list_empty(&frame_table)){
         victim = list_entry(list_pop_front(&frame_table),struct frame, elem);
+        return victim;
     }
 
 	return victim;
@@ -158,8 +161,9 @@ vm_evict_frame (void) {
 	struct frame *victim UNUSED = vm_get_victim ();
 	/* TODO: swap out the victim and return the evicted frame. */
 
-    if(victim->page != NULL)
+    if(victim->page != NULL){
         swap_out(victim->page);
+    }
 
 	return victim;
 }
@@ -174,13 +178,15 @@ vm_get_frame (void) {
 	/* TODO: Fill this function. */
 
     void *kva = palloc_get_page(PAL_USER | PAL_ZERO);
-    if(kva == NULL)
+    if(kva == NULL){
         frame = vm_evict_frame();
+    }
     else{
         frame = (struct frame*)malloc(sizeof(struct frame));
         frame->kva = kva;
         frame->dup_count = 0;
     }
+    struct frame* lf = list_entry(list_rbegin(&frame_table), struct frame, elem);
     list_push_back(&frame_table, &frame->elem); 
     frame->page = NULL;
 
@@ -219,8 +225,10 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 	struct page *page = NULL;
 	/* TODO: Validate the fault */
 	/* TODO: Your code goes here */
+    //printf(" hi vthf ");
     page = spt_find_page(spt, addr);
     if(page == NULL){
+        ///printf(" page is null ");
         //printf(" null addr = %x ",addr);
         //stack growth
         if(addr <= USER_STACK && addr > USER_STACK - (1<<20) && 
@@ -229,17 +237,18 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
             vm_stack_growth(addr);
             return true;
         }
-        //printf(" here ");
         _exit(-1);
     }else{ 
         // write on code_part 
         if( write && page->writable == false){
+            //printf(" here2 ");
             _exit(-1);
         }
         //printf(" lazy loading ");
-        if(page->frame == NULL)
-            return vm_do_claim_page(page);
+        //if(page->frame == NULL)
+        return vm_do_claim_page(page);
     }
+    
     //printf(" false hangdong ");
     return false;
 }
