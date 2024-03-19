@@ -225,13 +225,13 @@ disk_write (struct disk *d, disk_sector_t sec_no, const void *buffer) {
 
 	ASSERT (d != NULL);
 	ASSERT (buffer != NULL);
-
+    
 	c = d->channel;
 	lock_acquire (&c->lock);
 	select_sector (d, sec_no);
 	issue_pio_command (c, CMD_WRITE_SECTOR_RETRY);
 	if (!wait_while_busy (d))
-		PANIC ("%s: disk write failed, sector=%"PRDSNu, d->name, sec_no);
+		PANIC ("%s: disk write failed, sector=%d", d->name, sec_no);
 	output_sector (c, buffer);
 	sema_down (&c->completion_wait);
 	d->write_cnt++;

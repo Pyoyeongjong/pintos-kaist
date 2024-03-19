@@ -44,6 +44,7 @@ struct page {
 	const struct page_operations *operations;
 	void *va;              /* Address in terms of user space */
 	struct frame *frame;   /* Back reference for frame */
+    uint64_t* pml4;
 
 	/* Your implementation */
     struct list_elem spt_elem;
@@ -112,6 +113,7 @@ bool vm_alloc_page_with_initializer (enum vm_type type, void *upage,
 		bool writable, vm_initializer *init, void *aux);
 void vm_dealloc_page (struct page *page);
 bool vm_claim_page (void *va);
+bool vm_do_claim_page(struct page* page);
 enum vm_type page_get_type (struct page *page);
 
 #endif  /* VM_VM_H */

@@ -218,8 +218,9 @@ __do_fork (void *aux) {
 	process_init ();
 
 	/* Finally, switch to the newly created process. */
-	if (succ)
+	if (succ){
 		do_iret (&if_);
+    }
 error:
     current->exit_status = TID_ERROR;
     sema_up(&current->fork_sema);
@@ -733,21 +734,23 @@ lazy_load_segment (struct page *page, void *aux) {
     struct file* file = laux->file;
     bool writable = page->writable;
  
-    //free(laux); // TODO: free aux here is right??
     file_seek(file, ofs);
 
-    uint8_t *kpage = page->frame->kva;
+    void *kpage = page->frame->kva;
     // Is this situatiion gonna be happened? 
     if (kpage == NULL)
         return false;
-
-    if(file_read(file, kpage, page_read_bytes) != (int)page_read_bytes) {
+    if(page->operations->type == VM_ANON){
+        printf(" lazy_load for code-data, kpage=%lx",kpage);
+    }
+    if(file_read(file, page->frame->kva, page_read_bytes) != (int)page_read_bytes) {
         palloc_free_page(kpage);
         return false;
     }
     memset (kpage + page_read_bytes, 0, page_zero_bytes);
 
     file_close(file);
+
 
     return true;
 }

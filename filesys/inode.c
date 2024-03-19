@@ -201,8 +201,10 @@ inode_read_at (struct inode *inode, void *buffer_, off_t size, off_t offset) {
 			break;
 
 		if (sector_ofs == 0 && chunk_size == DISK_SECTOR_SIZE) {
+    printf(" hi3 ");
 			/* Read full sector directly into caller's buffer. */
 			disk_read (filesys_disk, sector_idx, buffer + bytes_read); 
+    printf(" hi3 ");
 		} else {
 			/* Read sector into bounce buffer, then partially copy
 			 * into caller's buffer. */

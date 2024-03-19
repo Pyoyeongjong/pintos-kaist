@@ -1,6 +1,7 @@
 #include "tests/main.h"
 #include "tests/vm/parallel-merge.h"
 
+int a;
 void
 test_main (void) 
 {

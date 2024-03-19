@@ -19,9 +19,9 @@ main (int argc UNUSED, char *argv[])
   unsigned char *p;
   size_t size;
   size_t i;
-
   quiet = true;
 
+  printf("\n\n@@child-reached\n ");
   CHECK ((handle = open (argv[1])) > 1, "open \"%s\"", argv[1]);
 
   size = read (handle, buf, sizeof buf);
@@ -37,6 +37,14 @@ main (int argc UNUSED, char *argv[])
   seek (handle, 0);
   write (handle, buf, size);
   close (handle);
+      printf("\n@open buf0 ! ");
+      char str[512];
+      handle = open("buf0");
+      printf(" handle = %d ",handle);
+      read(handle, str, 512);
+      printf("str=%s ",str);
+      close(handle);
+  printf("@@child-end\n ");
   
   return 123;
 }

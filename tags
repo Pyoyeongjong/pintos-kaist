@@ -99,9 +99,9 @@ E820_MAP4	include/threads/loader.h	21;"	d
 EFER_LME	threads/start.S	/^#define EFER_LME (1 << 8)$/;"	d
 EFER_MSR	threads/start.S	/^#define EFER_MSR 0xC0000080$/;"	d
 EFER_SCE	threads/start.S	/^#define EFER_SCE (1 << 0)$/;"	d
-EI_NIDENT	userprog/process.c	353;"	d	file:
+EI_NIDENT	userprog/process.c	354;"	d	file:
 ELEM_BITS	lib/kernel/bitmap.c	22;"	d	file:
-ELF	userprog/process.c	399;"	d	file:
+ELF	userprog/process.c	400;"	d	file:
 ELF64_PHDR	userprog/process.c	/^struct ELF64_PHDR {$/;"	s	file:
 ELF64_hdr	userprog/process.c	/^struct ELF64_hdr {$/;"	s	file:
 EOChain	include/filesys/fat.h	14;"	d
@@ -261,11 +261,11 @@ PDPESHIFT	include/threads/pte.h	21;"	d
 PDX	include/threads/pte.h	27;"	d
 PDXSHIFT	include/threads/pte.h	22;"	d
 PF_P	include/userprog/exception.h	5;"	d
-PF_R	userprog/process.c	366;"	d	file:
+PF_R	userprog/process.c	367;"	d	file:
 PF_U	include/userprog/exception.h	7;"	d
 PF_W	include/userprog/exception.h	6;"	d
-PF_W	userprog/process.c	365;"	d	file:
-PF_X	userprog/process.c	364;"	d	file:
+PF_W	userprog/process.c	366;"	d	file:
+PF_X	userprog/process.c	365;"	d	file:
 PGBITS	include/threads/vaddr.h	19;"	d
 PGMASK	include/threads/vaddr.h	21;"	d
 PGSHIFT	include/threads/vaddr.h	18;"	d
@@ -334,15 +334,15 @@ PTRDIFF_MAX	include/lib/stdint.h	47;"	d
 PTRDIFF_MIN	include/lib/stdint.h	46;"	d
 PTX	include/threads/pte.h	28;"	d
 PTXSHIFT	include/threads/pte.h	23;"	d
-PT_DYNAMIC	userprog/process.c	357;"	d	file:
-PT_INTERP	userprog/process.c	358;"	d	file:
-PT_LOAD	userprog/process.c	356;"	d	file:
-PT_NOTE	userprog/process.c	359;"	d	file:
-PT_NULL	userprog/process.c	355;"	d	file:
-PT_PHDR	userprog/process.c	361;"	d	file:
-PT_SHLIB	userprog/process.c	360;"	d	file:
-PT_STACK	userprog/process.c	362;"	d	file:
-Phdr	userprog/process.c	400;"	d	file:
+PT_DYNAMIC	userprog/process.c	358;"	d	file:
+PT_INTERP	userprog/process.c	359;"	d	file:
+PT_LOAD	userprog/process.c	357;"	d	file:
+PT_NOTE	userprog/process.c	360;"	d	file:
+PT_NULL	userprog/process.c	356;"	d	file:
+PT_PHDR	userprog/process.c	362;"	d	file:
+PT_SHLIB	userprog/process.c	361;"	d	file:
+PT_STACK	userprog/process.c	363;"	d	file:
+Phdr	userprog/process.c	401;"	d	file:
 Prev	tests/Algorithm/Diff.pm	/^sub Prev {$/;"	s
 QUEUE	devices/serial.c	/^static enum { UNINIT, POLL, QUEUE } mode;$/;"	e	enum:__anon3	file:
 R	include/threads/interrupt.h	/^	struct gp_registers R;$/;"	m	struct:intr_frame	typeref:struct:intr_frame::gp_registers
@@ -575,6 +575,7 @@ _wait	userprog/syscall.c	/^_wait (pid_t pid){$/;"	f
 _withPositionsOfInInterval	tests/Algorithm/Diff.pm	/^sub _withPositionsOfInInterval$/;"	s
 _write	userprog/syscall.c	/^_write(int fd, const void *buffer, unsigned size){$/;"	f
 a	tests/threads/priority-donate-nest.c	/^    struct lock *a;$/;"	m	struct:locks	typeref:struct:locks::lock	file:
+a	tests/vm/page-merge-par.c	/^int a;$/;"	v
 a_thread_func	tests/threads/priority-donate-multiple.c	/^a_thread_func (void *lock_) $/;"	f	file:
 a_thread_func	tests/threads/priority-donate-multiple.c	/^static thread_func a_thread_func;$/;"	v	file:
 a_thread_func	tests/threads/priority-donate-multiple2.c	/^a_thread_func (void *lock_) $/;"	f	file:
@@ -811,7 +812,7 @@ desc_cnt	threads/malloc.c	/^static size_t desc_cnt;         \/* Number of descri
 desc_ptr	include/threads/mmu.h	/^struct desc_ptr {$/;"	s
 descs	threads/malloc.c	/^static struct desc descs[10];   \/* Descriptors. *\/$/;"	v	typeref:struct:desc	file:
 destroy	include/vm/vm.h	/^	void (*destroy) (struct page *);$/;"	m	struct:page_operations
-destroy	include/vm/vm.h	85;"	d
+destroy	include/vm/vm.h	86;"	d
 destruction_req	threads/thread.c	/^static struct list destruction_req;$/;"	v	typeref:struct:list	file:
 dev_no	include/devices/disk.h	/^	int dev_no;                 \/* Device 0 or 1 for master or slave. *\/$/;"	m	struct:disk
 devices	devices/disk.c	/^	struct disk devices[2];     \/* The devices on this channel. *\/$/;"	m	struct:channel	typeref:struct:channel::disk	file:
@@ -1492,6 +1493,7 @@ pick_pivot	tests/vm/qsort.c	/^pick_pivot (unsigned char *buf, size_t size) $/;"	
 pid_t	include/lib/user/syscall.h	/^typedef int pid_t;$/;"	t
 pid_t	userprog/syscall.c	/^typedef int pid_t;$/;"	t	file:
 pml4	include/threads/thread.h	/^	uint64_t *pml4;                     \/* Page map level 4 *\/$/;"	m	struct:thread
+pml4	include/vm/vm.h	/^    uint64_t* pml4;$/;"	m	struct:page
 pml4_activate	threads/mmu.c	/^pml4_activate (uint64_t *pml4) {$/;"	f
 pml4_clear_page	threads/mmu.c	/^pml4_clear_page (uint64_t *pml4, void *upage) {$/;"	f
 pml4_create	threads/mmu.c	/^pml4_create (void) {$/;"	f
@@ -1764,9 +1766,9 @@ swap_byte	lib/random.c	/^swap_byte (uint8_t *a, uint8_t *b) {$/;"	f	file:
 swap_byte	tests/arc4.c	/^swap_byte (uint8_t *a, uint8_t *b)$/;"	f	file:
 swap_disk	vm/anon.c	/^static struct disk *swap_disk;$/;"	v	typeref:struct:disk	file:
 swap_in	include/vm/vm.h	/^	bool (*swap_in) (struct page *, void *);$/;"	m	struct:page_operations
-swap_in	include/vm/vm.h	83;"	d
+swap_in	include/vm/vm.h	84;"	d
 swap_out	include/vm/vm.h	/^	bool (*swap_out) (struct page *);$/;"	m	struct:page_operations
-swap_out	include/vm/vm.h	84;"	d
+swap_out	include/vm/vm.h	85;"	d
 swap_table	vm/anon.c	/^struct bitmap *swap_table;$/;"	v	typeref:struct:bitmap
 symlink	lib/user/syscall.c	/^symlink (const char* target, const char* linkpath) {$/;"	f
 syscall	lib/user/syscall.c	/^static __inline int64_t syscall (uint64_t num_, uint64_t a1_, uint64_t a2_,$/;"	f	file:
@@ -2097,12 +2099,12 @@ vga_putc	devices/vga.c	/^vga_putc (int c) {$/;"	f
 vhprintf	lib/user/console.c	/^vhprintf (int handle, const char *format, va_list args) {$/;"	f
 vhprintf_aux	lib/user/console.c	/^struct vhprintf_aux {$/;"	s	file:
 vm_SRC	vm/targets.mk	/^vm_SRC = vm\/vm.c          # Main api proxy$/;"	m
-vm_alloc_page	include/vm/vm.h	109;"	d
+vm_alloc_page	include/vm/vm.h	110;"	d
 vm_alloc_page_with_initializer	vm/vm.c	/^vm_alloc_page_with_initializer (enum vm_type type, void *upage, bool writable,$/;"	f
 vm_anon_init	vm/anon.c	/^vm_anon_init (void) {$/;"	f
 vm_claim_page	vm/vm.c	/^vm_claim_page (void *va UNUSED) {$/;"	f
 vm_dealloc_page	vm/vm.c	/^vm_dealloc_page (struct page *page) {$/;"	f
-vm_do_claim_page	vm/vm.c	/^vm_do_claim_page (struct page *page) {$/;"	f	file:
+vm_do_claim_page	vm/vm.c	/^vm_do_claim_page (struct page *page) {$/;"	f
 vm_evict_frame	vm/vm.c	/^vm_evict_frame (void) {$/;"	f	file:
 vm_file_init	vm/file.c	/^vm_file_init (void) {$/;"	f
 vm_get_frame	vm/vm.c	/^vm_get_frame (void) {$/;"	f	file:

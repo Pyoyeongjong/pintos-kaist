@@ -177,6 +177,7 @@ _fork (const char *thread_name, struct intr_frame *f){
 int
 _exec (const char *cmd_line){
 
+    //printf("exec line=%s ",cmd_line);
 
     user_memory_access(cmd_line);
     char *fn_copy;

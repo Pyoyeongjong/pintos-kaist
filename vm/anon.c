@@ -49,16 +49,29 @@ anon_initializer (struct page *page, enum vm_type type, void *kva) {
 static bool
 anon_swap_in (struct page *page, void *kva) {
 	struct anon_page *anon_page = &page->anon;
+    ///printf("\nanon_swap_in ");
 
     int disk_no = anon_page->disk_index;
+    ///printf(" 0/ ");
 
-    if(bitmap_test(swap_table, disk_no) == false)
+    if(disk_no < 0){
+        printf(" disk_no < 0");
+        return true;
+    }
+
+    if(bitmap_test(swap_table, disk_no) == false){
+        printf(" disk_no=true ");
         return false;
+    }
+
+    ///printf(" 1/ ");
 
     for(int i=0; i<SECTORS_PER_PAGE; i++){
         disk_read(swap_disk, disk_no * SECTORS_PER_PAGE + i, page->frame->kva + i * DISK_SECTOR_SIZE);
     }
+    ///printf(" 2/ ");
     bitmap_set(swap_table, disk_no, false);
+    anon_page->disk_index = -1;
     return true;
 }
 
@@ -66,18 +79,23 @@ anon_swap_in (struct page *page, void *kva) {
 static bool
 anon_swap_out (struct page *page) {
 	struct anon_page *anon_page = &page->anon;
-
-
+    ///printf("\nanon_swap_out ");
     size_t disk_no = bitmap_scan(swap_table, 0, 1, false);
     if(disk_no == BITMAP_ERROR)
         return false;
-
-    for(int i=0; i<SECTORS_PER_PAGE; i++){
-        disk_write(swap_disk, disk_no * SECTORS_PER_PAGE + i, page->va + DISK_SECTOR_SIZE * i);
-    }
-
     bitmap_set(swap_table, disk_no, true);
-    pml4_clear_page(thread_current()->pml4, page->va);
+
+    //char a = *(char*)page->va; 
+    ///printf(" 1,page->va=%x,page->frame->kva=%x,disk_no=%d \n",page->va,page->frame->kva,disk_no);
+    for(int i=0; i<SECTORS_PER_PAGE; i++){
+        //printf("i=%d",i);
+        disk_write(swap_disk, disk_no * SECTORS_PER_PAGE + i, 
+                (page->frame->kva + DISK_SECTOR_SIZE * i));
+    }
+    ///printf(" 2/ ");
+
+    // it should be page's own pml4!
+    pml4_clear_page(page->pml4, page->va);
     anon_page->disk_index = disk_no;
     page->frame->page = NULL;
     page->frame = NULL;
@@ -92,7 +110,11 @@ anon_destroy (struct page *page) {
     struct frame* frame = page->frame;
 
     pml4_clear_page(pml4, page->va);
-    
+   
+    //added.. for merge-seq -> success!
+    palloc_free_page(page->frame->kva);
+    list_remove(&page->frame->elem);
+    free(frame);
 
     return;
 }

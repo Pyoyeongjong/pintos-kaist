@@ -40,7 +40,6 @@ page_get_type (struct page *page) {
 
 /* Helpers */
 static struct frame *vm_get_victim (void);
-static bool vm_do_claim_page (struct page *page);
 static struct frame *vm_evict_frame (void);
 static bool install_page (void *upage, void *kpage, bool writable);
 
@@ -61,6 +60,7 @@ vm_alloc_page_with_initializer (enum vm_type type, void *upage, bool writable,
 		 * TODO: and then create "uninit" page struct by calling uninit_new. You
 		 * TODO: should modify the field after calling the uninit_new.*/
         struct page* page = (struct page*)malloc(sizeof(struct page));
+
 		bool (*initializer)(struct page *, enum vm_type, void *);
         if(type == VM_ANON)
         {
@@ -75,6 +75,9 @@ vm_alloc_page_with_initializer (enum vm_type type, void *upage, bool writable,
             initializer = NULL;
         }
         uninit_new(page, upage, init, type, aux, initializer);
+
+        page->pml4 = thread_current()->pml4;
+
         page->writable = writable;
         //printf(" pageva=%x pageinva=%x ",page,page->va);
 
@@ -82,6 +85,7 @@ vm_alloc_page_with_initializer (enum vm_type type, void *upage, bool writable,
         if(!spt_insert_page(spt, page)){
             return false;
         }
+        //printf("va=%x was allocated. \n",page->va);
         return true;
 	}
 err:
@@ -97,7 +101,6 @@ spt_find_page (struct supplemental_page_table *spt UNUSED, void *va UNUSED) {
     struct list_elem* e;
     for(e = list_begin(spt_list); e != list_end(spt_list); e = list_next(e)){
         struct page* p = list_entry(e, struct page, spt_elem);
-        //printf(" wanttofindva=%x,   page.va=%x ",va, p->va);
         if(p->va == pg_round_down(va)){
             page = p;
             return page;
@@ -162,6 +165,7 @@ vm_evict_frame (void) {
 	/* TODO: swap out the victim and return the evicted frame. */
 
     if(victim->page != NULL){
+        //printf("victim->page.va=%x,type=%d ",victim->page->va,victim->page->operations->type);
         swap_out(victim->page);
     }
 
@@ -174,14 +178,17 @@ vm_evict_frame (void) {
  * space.*/
 static struct frame *
 vm_get_frame (void) {
+    //printf(" ,vm_get_frame ");
 	struct frame *frame = NULL;
 	/* TODO: Fill this function. */
 
     void *kva = palloc_get_page(PAL_USER | PAL_ZERO);
     if(kva == NULL){
+        //printf("\n /evicted/");
         frame = vm_evict_frame();
     }
     else{
+        //printf(" /created/");
         frame = (struct frame*)malloc(sizeof(struct frame));
         frame->kva = kva;
         frame->dup_count = 0;
@@ -222,14 +229,27 @@ bool
 vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 		bool user UNUSED, bool write UNUSED, bool not_present UNUSED) {
 	struct supplemental_page_table *spt UNUSED = &thread_current ()->spt;
+    // test
+    struct list* spt_list = &spt->spt_list;
+    struct list_elem* e;
+    /*
+    if(addr < 0x401000){
+    printf("\n TEST \n");
+    printf("spt_list=%x ",spt_list);
+    for(e = list_begin(spt_list); e != list_end(spt_list); e= list_next(e)){
+        struct page* p = list_entry(e, struct page, spt_elem);
+        printf("page=%x, page.va=%x,type=%d ",p,p->va, p->operations->type);
+    }
+    }
+    */
+
 	struct page *page = NULL;
 	/* TODO: Validate the fault */
 	/* TODO: Your code goes here */
-    //printf(" hi vthf ");
+    printf(" vm_try_handle_fault, addr=%x, spt_list=%x ",addr,&spt->spt_list);
     page = spt_find_page(spt, addr);
     if(page == NULL){
         ///printf(" page is null ");
-        //printf(" null addr = %x ",addr);
         //stack growth
         if(addr <= USER_STACK && addr > USER_STACK - (1<<20) && 
                 pg_round_down(addr) <= pg_round_up(f->rsp) && addr > (f->rsp)-10){
@@ -237,8 +257,10 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
             vm_stack_growth(addr);
             return true;
         }
+        printf(" null_page & not stack growth, addr=%x",addr); 
         _exit(-1);
     }else{ 
+        printf(", page_type=%d\n ",page->operations->type);
         // write on code_part 
         if( write && page->writable == false){
             //printf(" here2 ");
@@ -275,23 +297,26 @@ vm_claim_page (void *va UNUSED) {
 }
 
 /* Claim the PAGE and set up the mmu. */
-static bool
+bool
 vm_do_claim_page (struct page *page) {
+    //printf(" do_claim_page, ");
 	struct frame *frame = vm_get_frame ();
 
+    //printf(" get_frame_ok,frame->kva=%x ",frame->kva);
     /* Set links */
 	frame->page = page;
 	page->frame = frame;
 
-	/* TODO: Insert page table entry to map page's VA to frame's PA. */
-    struct thread* curr = thread_current ();
-    //malloc
-    
+    /*
     if(!install_page(page->va, frame->kva, page->writable)){
         // TODO: destroy page? or do nothing?
-        printf(" 4/ ");
         return false;
     }
+    */
+    //printf("\n    curr->pml4=%x , page->pml4=%x ",thread_current()->pml4, page->pml4);
+	if((pml4_get_page (page->pml4, page->va) == NULL
+			&& pml4_set_page (page->pml4, page->va, page->frame->kva, page->writable)) == false)
+        return false;
 	return swap_in (page, frame->kva);
 }
 //uninit_initialize
@@ -307,13 +332,13 @@ supplemental_page_table_init (struct supplemental_page_table *spt UNUSED) {
 bool
 supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
 		struct supplemental_page_table *src UNUSED) {
-    //printf("\n@@@copy start@@@\n");
+    printf("\n@@@copy start@@@\n");
     if(dst == NULL || src == NULL)
         return false;
     struct list* dst_list = &dst->spt_list;
     struct list* src_list = &src->spt_list;
 
-    // Should do Deep copy
+    // Should do Deep copy / hard-copy sry
     struct list_elem *e;
     for(e = list_begin(src_list); e != list_end(src_list); e = list_next(e)){
         struct page* src_page = list_entry(e, struct page, spt_elem);
@@ -339,11 +364,7 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
         }
         else if(curr_type == VM_ANON){
             vm_alloc_page(src_page->uninit.type, src_page->va, src_page->writable); 
-            dst_page = spt_find_page(dst, src_page->va);
-            vm_claim_page(dst_page->va);
-            memcpy(dst_page->frame->kva, src_page->frame->kva, PGSIZE);        
             //printf(" src_page=%s dst_page=%s",0x4747fff6,0x4747fff6); 
-
         }
         else if(curr_type == VM_FILE){
             struct file_page *sfp = &src_page->file;
@@ -353,13 +374,39 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
             daux->page_read_bytes = sfp->page_read_bytes;
             daux->page_zero_bytes = sfp->page_zero_bytes;
             daux->file = file_reopen(sfp->file); 
+            daux->mmap_head = sfp->mmap_head;
+            daux->mmap_len = sfp->mmap_len;
             vm_alloc_page_with_initializer(curr_type, src_page->va, src_page->writable
                     , lazy_load_segment, daux); 
-            dst_page = spt_find_page(dst, src_page->va);
-            bool success = vm_claim_page(dst_page->va);
-            memcpy(dst_page->frame->kva, src_page->frame->kva, PGSIZE);        
         }
     }
+    // After alloc, claim!
+    //printf(" claim start \n");
+    struct page* sp, *dp;
+    for(e = list_begin(dst_list); e != list_end(dst_list); e = list_next(e)){
+        dp = list_entry(e, struct page, spt_elem);
+        sp = spt_find_page(src, dp->va);
+        if(sp->operations->type == VM_UNINIT){
+            continue;
+        }
+        if(sp->frame == NULL){
+            printf("\n\nspecial case \n\n");
+            vm_do_claim_page(sp);
+        }
+        vm_do_claim_page(dp);
+        memcpy(dp->frame->kva, sp->frame->kva, PGSIZE);
+    }
+    printf("\n@@copy end@@\n");
+
+    printf("\n\n dst_list=%x ",dst_list);
+    /*
+    for(e = list_begin(dst_list); e!= list_end(dst_list); e=list_next(e)){
+        struct page *p = list_entry(e, struct page, spt_elem);
+       
+        printf("page=%x, page.va=%x ,type=%d ",p,p->va, p->operations->type);
+
+    }
+    */
     return true;
 
 }
@@ -382,6 +429,7 @@ supplemental_page_table_kill (struct supplemental_page_table *spt UNUSED) {
         e = list_next(e); 
         spt_remove_page(spt, p); 
     }
+    printf("\n spt killed \n");
     return;
 }
 

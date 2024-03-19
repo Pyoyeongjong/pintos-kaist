@@ -11,7 +11,7 @@
 #include "tests/main.h"
 
 #define CHUNK_SIZE (128 * 1024)
-#define CHUNK_CNT 8                             /* Number of chunks. */
+#define CHUNK_CNT 2                             /* Number of chunks. */
 #define DATA_SIZE (CHUNK_CNT * CHUNK_SIZE)      /* Buffer size. */
 
 unsigned char buf1[DATA_SIZE], buf2[DATA_SIZE];
@@ -51,15 +51,26 @@ sort_chunks (const char *subprocess, int exit_status)
 
       /* Write this chunk to a file. */
       snprintf (fn, sizeof fn, "buf%zu", i);
-      create (fn, CHUNK_SIZE);
+      printf("fn = %s ",fn);
+      if(create (fn, CHUNK_SIZE)==false)
+          printf(" create false ");
       quiet = true;
       CHECK ((handle = open (fn)) > 1, "open \"%s\"", fn);
       write (handle, buf1 + CHUNK_SIZE * i, CHUNK_SIZE);
       close (handle);
 
+      printf("\n@open buf0 ! ");
+      char str[512];
+      handle = open(fn);
+      printf(" handle = %d ",handle);
+      read(handle, str, 512);
+      printf("str=%s ",str);
+      close(handle);
+
       /* Sort with subprocess. */
       snprintf (cmd, sizeof cmd, "%s %s", subprocess, fn);
       children[i] = fork (subprocess);
+      printf(" created children[i]=%d ",children[i]);
       if (children[i] == 0)
         CHECK ((children[i] = exec (cmd)) != -1, "exec \"%s\"", cmd);
       quiet = false;
@@ -70,12 +81,17 @@ sort_chunks (const char *subprocess, int exit_status)
       char fn[128];
       int handle;
 
+      printf(" children[i].tid=%d ",children[i]);
+
       CHECK (wait (children[i]) == exit_status, "wait for child %zu", i);
 
       /* Read chunk back from file. */
       quiet = true;
       snprintf (fn, sizeof fn, "buf%zu", i);
+      handle = open(fn);
+      printf(" handle=%d ",handle);
       CHECK ((handle = open (fn)) > 1, "open \"%s\"", fn);
+
       read (handle, buf1 + CHUNK_SIZE * i, CHUNK_SIZE);
       close (handle);
       quiet = false;

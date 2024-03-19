@@ -70,7 +70,8 @@ file_backed_swap_out (struct page *page) {
     page->frame->page = NULL;
     page->frame = NULL;
     pml4_clear_page(pml4, page->va);
-    
+
+    return true; 
 }
 
 /* Destory the file backed page. PAGE will be freed by the caller. */
@@ -79,13 +80,19 @@ file_backed_destroy (struct page *page) {
 	struct file_page *file_page UNUSED = &page->file;
     uint64_t* pml4 = thread_current()->pml4;
  
-    if(file_page->mmap_len > 0 && pml4_is_dirty(pml4, page->va)){
+    if(file_page->mmap_len > 0 || pml4_is_dirty(pml4, page->va)){
         //printf(" page is dirty.. ");
         file_write_at(file_page->file, page->frame->kva, PGSIZE,file_page->ofs);
         pml4_set_dirty(pml4, page->va, 0);
     } 
 
     file_close(file_page->file);
+
+    pml4_clear_page(thread_current()->pml4, page->va);
+
+    palloc_free_page(page->frame->kva);
+    list_remove(&page->frame->elem);
+    free(page->frame);
     
     return;
 }
@@ -173,12 +180,14 @@ do_munmap (void *addr) {
             printf(" NULL page // ");
             continue;
         }
+        pml4_clear_page(thread_current()->pml4, page->va);
         if(pml4_is_dirty(thread_current()->pml4, page->va)){
             //printf(" page is dirty.. ");
             file_write_at(page->file.file, page->frame->kva, PGSIZE,page->file.ofs);
             pml4_set_dirty(thread_current()->pml4, page->va, 0);
         } 
         spt_remove_page(spt, page);
+        // merge-seq
     }
     return;
 }
